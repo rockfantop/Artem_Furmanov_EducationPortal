@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Portal.Application.ModelsDTO;
 using Portal.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -8,15 +9,10 @@ using System.Text.RegularExpressions;
 
 namespace Portal.UI.Validators
 {
-    class UserValidator : AbstractValidator<User>
+    class UserValidator : AbstractValidator<InputUserDTO>
     {
         public UserValidator()
         {
-            RuleSet("Name", () =>
-            {
-                RuleFor(x => x.Name).Must(IsValidName).WithMessage("Empty name!");
-            });
-
             RuleSet("Email", () =>
             {
                 RuleFor(x => x.Email).Must(IsValidEmail).WithMessage("Invalid email!");
@@ -26,11 +22,6 @@ namespace Portal.UI.Validators
             {
                 RuleFor(x => x.Password).Must(IsValidPassword).WithMessage("Invalid password!");
             });
-        }
-
-        private bool IsValidName(string name)
-        {
-            return name != "";
         }
 
         private bool IsValidEmail(string email)

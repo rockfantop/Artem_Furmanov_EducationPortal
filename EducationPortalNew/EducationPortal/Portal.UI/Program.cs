@@ -1,12 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using Portal.Application.Hashers;
 using Portal.Application.Interfaces;
+using Portal.Application.ModelsDTO;
 using Portal.Application.Services;
 using Portal.Domain.Interfaces;
+using Portal.Domain.Models;
 using Portal.Infrastructure.Interfaces;
 using Portal.Infrastructure.Repositories;
 using Portal.Infrastructure.XML.XMLHandlers;
+using Portal.UI.Validators;
 using System;
 
 namespace Portal.UI
@@ -22,9 +27,11 @@ namespace Portal.UI
 
         static IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IUserHandler, XMLUserHandler>();
-            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IXmlHandler<User>, XmlHandler<User>>();
+            services.AddTransient<IHasher, SHA256Hasher>();
+            services.AddTransient<IRepository<User>, Repository<User>>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<AbstractValidator<InputUserDTO>, UserValidator>();
             services.AddTransient<Registration>();
             services.AddTransient<Authentication>();
 

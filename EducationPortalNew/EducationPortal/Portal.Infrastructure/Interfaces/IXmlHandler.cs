@@ -3,10 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Portal.Domain.Interfaces
+namespace Portal.Infrastructure.Interfaces
 {
-    public interface IRepository <TEntity>
-        where TEntity : DbEntity
+    public interface IXmlHandler<TEntity>
     {
         void Create(TEntity entity);
 

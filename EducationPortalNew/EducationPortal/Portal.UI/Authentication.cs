@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Portal.Application.Interfaces;
+using Portal.Application.ModelsDTO;
 using Portal.Domain.Interfaces;
 using Portal.UI.Validators;
 using System;
@@ -17,14 +18,12 @@ namespace Portal.UI
             this.userService = service;
         }
 
-        private bool AuthenticateUser(string email, string password)
-        {
-            return this.userService.VerifyUser(email, password);
-        }
-
         public void Start()
         {
             Console.WriteLine("Welcome to the Authentication\n");
+
+            InputUserDTO user; 
+
             while (true)
             {
                 Console.Write("Enter your email: ");
@@ -35,14 +34,22 @@ namespace Portal.UI
 
                 string password = Console.ReadLine();
 
-                if (AuthenticateUser(email, password) != false)
+                user = new InputUserDTO
+                {
+                    Email = email,
+                    Password = password
+                };
+
+                var serviceResult = this.userService.Athentication(user);
+
+                if (serviceResult.IsSuccesful)
                 {
                     Console.WriteLine("In Application");
                     break;
                 }
                 else
                 {
-                    Console.WriteLine("Invalid email or password");
+                    Console.WriteLine(serviceResult.Message);
                 }
             }
         }

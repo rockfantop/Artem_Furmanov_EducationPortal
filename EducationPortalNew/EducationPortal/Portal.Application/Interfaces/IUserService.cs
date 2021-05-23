@@ -1,4 +1,5 @@
-﻿using Portal.Domain.Models;
+﻿using Portal.Application.ModelsDTO;
+using Portal.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,10 +8,8 @@ namespace Portal.Application.Interfaces
 {
     public interface IUserService
     {
-        User FindUser(string email);
+        IServiceResult Registation(InputUserDTO newUser);
 
-        void CreateUser(User newUser);
-
-        bool VerifyUser(string email, string password);
+        IServiceResult Athentication(InputUserDTO userLog);
     }
 }

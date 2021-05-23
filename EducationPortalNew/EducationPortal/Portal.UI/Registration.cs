@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Portal.Application.Interfaces;
+using Portal.Application.ModelsDTO;
 using Portal.Domain.Interfaces;
 using Portal.Domain.Models;
 using Portal.UI.Validators;
@@ -13,23 +14,17 @@ namespace Portal.UI
     class Registration
     {
         private readonly IUserService userService;
-        //private readonly ILogger<Registration> logger;
-        private UserValidator userValidator = new UserValidator();
+        private AbstractValidator<InputUserDTO> userValidator;
 
-        public Registration(IUserService service)
+        public Registration(IUserService service, AbstractValidator<InputUserDTO> validator)
         {
             this.userService = service;
-        }
-
-        private void RegistrateUser(User newUser)
-        {
-            userService.CreateUser(newUser);
-            //logger.LogInformation($"Created {newUser.Email} user");
+            this.userValidator = validator;
         }
 
         public void Start()
         {
-            var user = new User();
+            var user = new InputUserDTO();
 
             FluentValidation.Results.ValidationResult result = new FluentValidation.Results.ValidationResult();
 
@@ -43,36 +38,17 @@ namespace Portal.UI
                     return;
                 }
 
-                while (user.Name == null || user.Name == "")
-                {
-                    Console.Write("Enter your name: ");
-
-                    user.Name = Console.ReadLine();
-
-                    result = userValidator.Validate(user, options => options.IncludeRuleSets("Name"));
-
-                    foreach (var error in result.Errors)
-                    {
-                        Console.WriteLine(error.ErrorMessage);
-                    }
-                }
-
                 while (user.Email == null || user.Email == "" || result?.IsValid == false)
                 {
                     Console.Write("Enter your email: ");
 
                     user.Email = Console.ReadLine();
 
-                    result = userValidator.Validate(user, options => options.IncludeRuleSets("Email"));
+                    result = this.userValidator.Validate(user, options => options.IncludeRuleSets("Email"));
 
                     if (result.IsValid == true)
                     {
-                        if (userService.FindUser(user.Email) != null)
-                        {
-                            Console.WriteLine("Email is exist!");
-                            user.Email = "";
-                            continue;
-                        }
+                        break;
                     }
 
                     foreach (var error in result.Errors)
@@ -89,15 +65,20 @@ namespace Portal.UI
 
                     result = userValidator.Validate(user, options => options.IncludeRuleSets("Password"));
 
+                    if (result.IsValid == true)
+                    {
+                        break;
+                    }
+
                     foreach (var error in result.Errors)
                     {
                         Console.WriteLine(error.ErrorMessage);
                     }
                 }
 
-                RegistrateUser(user);
+                var serviceResult = this.userService.Registation(user);
 
-                Console.WriteLine("You are registered!");
+                Console.WriteLine(serviceResult.Message);
             }
         }
     }
