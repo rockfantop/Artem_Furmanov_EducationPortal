@@ -1,28 +1,30 @@
-﻿using Microsoft.Extensions.Logging;
-using Portal.Application.Interfaces;
+﻿using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
-using Portal.Domain.Interfaces;
-using Portal.UI.Validators;
+using Portal.UI.Intefaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Portal.UI
+namespace Portal.UI.Windows
 {
-    class Authentication
+    public class AuthWindow : IWindow
     {
         private readonly IUserService userService;
 
-        public Authentication(IUserService service)
+        public AuthWindow(IUserService service)
         {
             this.userService = service;
         }
 
-        public void Start()
+        public string Title => "Authentication";
+
+        public void Show()
         {
+            Console.Clear();
+
             Console.WriteLine("Welcome to the Authentication\n");
 
-            InputUserDTO user; 
+            InputUserDTO user;
 
             while (true)
             {
@@ -44,8 +46,17 @@ namespace Portal.UI
 
                 if (serviceResult.IsSuccesful)
                 {
-                    Console.WriteLine("In Application");
-                    break;
+
+                    Console.WriteLine("\nIn Application\n");
+
+                    var logginedUser = InSystemUser.GetInstance();
+
+                    logginedUser.Id = serviceResult.Result.Id;
+                    logginedUser.Email = serviceResult.Result.Email;
+                    logginedUser.Name = serviceResult.Result.Name;
+                    logginedUser.OwnedCourses = serviceResult.Result.OwnedCourses;
+
+                    return;
                 }
                 else
                 {

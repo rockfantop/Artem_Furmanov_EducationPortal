@@ -10,6 +10,8 @@ namespace Portal.Application.Interfaces
     {
         IServiceResult Registation(InputUserDTO newUser);
 
-        IServiceResult Athentication(InputUserDTO userLog);
+        IServiceResult<LogginedUserDTO> Athentication(InputUserDTO userLog);
+
+        IServiceResult UpdateInfo(LogginedUserDTO logginedUser);
     }
 }

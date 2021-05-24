@@ -1,29 +1,30 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Logging;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
-using Portal.Domain.Interfaces;
-using Portal.Domain.Models;
-using Portal.UI.Validators;
+using Portal.UI.Intefaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Portal.UI
+namespace Portal.UI.Windows
 {
-    class Registration
+    public class RegisterWindow : IWindow
     {
         private readonly IUserService userService;
         private AbstractValidator<InputUserDTO> userValidator;
 
-        public Registration(IUserService service, AbstractValidator<InputUserDTO> validator)
+        public RegisterWindow(IUserService service, AbstractValidator<InputUserDTO> validator)
         {
             this.userService = service;
             this.userValidator = validator;
         }
 
-        public void Start()
+        public string Title => "Registration";
+
+        public void Show()
         {
+            Console.Clear();
+
             var user = new InputUserDTO();
 
             FluentValidation.Results.ValidationResult result = new FluentValidation.Results.ValidationResult();

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Portal.Infrastructure.Interfaces
 {
-    public interface IXmlHandler<TEntity>
+    public interface IJsonHandler<TEntity>
     {
         void Create(TEntity entity);
 
