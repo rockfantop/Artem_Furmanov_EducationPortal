@@ -3,17 +3,18 @@ using Portal.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Portal.Application.Interfaces
 {
     public interface ICourseService
     {
-        IServiceResult CreateCourse(EmptyCourseDTO emptyCourse);
+        Task<IServiceResult> CreateCourseAsync(EmptyCourseDTO emptyCourseDTO);
 
-        IServiceResult AddMaterial(Course course, Material material);
+        Task<IServiceResult> CreateCourseAsync(CourseDTO courseDTO);
 
-        IServiceResult UpdateCourse();
+        Task<IServiceResult> AddMaterialAsync(CourseDTO courseDTO, MaterialDTO materialDTO);
 
-        IServiceResult SaveChanges();
+        Task<IServiceResult> UpdateCourseAsync(CourseDTO courseDTO);
     }
 }

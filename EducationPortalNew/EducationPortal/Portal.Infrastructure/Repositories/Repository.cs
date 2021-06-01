@@ -4,10 +4,11 @@ using Portal.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Portal.Infrastructure.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity>
+    public class Repository<TEntity> : IAsyncRepository<TEntity>
          where TEntity : DbEntity
     {
         private readonly IJsonHandler<TEntity> jsonHandler;
@@ -17,34 +18,29 @@ namespace Portal.Infrastructure.Repositories
             this.jsonHandler = handler;
         }
 
-        public void Create(TEntity entity)
+        public async Task CreateAsync(TEntity entity)
         {
-            this.jsonHandler.Create(entity);
+            await this.jsonHandler.CreateAsync(entity);
         }
 
-        public void Delete(TEntity entity)
+        public async Task DeleteAsync(TEntity entity)
         {
-            this.jsonHandler.Delete(entity);
+            await this.jsonHandler.DeleteAsync(entity);
         }
 
-        public void Update(TEntity entity)
+        public async Task UpdateAsync(TEntity entity)
         {
-            this.jsonHandler.Update(entity);
+            await this.jsonHandler.UpdateAsync(entity);
         }
 
-        public IEnumerable<TEntity> GetAllEntities(Func<TEntity, bool> condition)
+        public async Task<IEnumerable<TEntity>> GetAllEntitiesAsync(Func<TEntity, bool> condition)
         {
-            return this.jsonHandler.GetAllEntities(condition);
+            return await this.jsonHandler.GetAllEntitiesAsync(condition);
         }
 
-        public TEntity GetEntity(Func<TEntity, bool> condition)
+        public async Task<TEntity> GetEntityAsync(Func<TEntity, bool> condition)
         {
-            return this.jsonHandler.GetEntity(condition);
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
+            return await this.jsonHandler.GetEntityAsync(condition);
         }
     }
 }

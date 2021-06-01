@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Portal.Application.Hashers;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
@@ -23,20 +24,22 @@ namespace Portal.UI
         public static IServiceProvider ConfigureServices(IServiceCollection services)
         {
             //Dictionary windows
-            services.AddTransient<IWindow, AuthWindow>();
-            services.AddTransient<IWindow, RegisterWindow>();
-            services.AddTransient<IWindow, CourseWindow>();
+            services.AddScoped<IWindow, AuthWindow>();
+            services.AddScoped<IWindow, RegisterWindow>();
+            services.AddScoped<IWindow, CourseWindow>();
 
-            services.AddTransient(typeof(IJsonHandler<>), typeof(JsonHandler<>));
-            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IJsonHandler<>), typeof(JsonHandler<>));
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
 
             services.AddTransient<IHasher, SHA256Hasher>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ICourseService, CourseService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICourseService, CourseService>();
 
             services.AddTransient<AbstractValidator<InputUserDTO>, UserValidator>();
 
-            services.AddTransient<WindowsManager>();
+            services.AddScoped<WindowsManager>();
+
+            services.AddHostedService<WindowsManager>();
 
             return services.BuildServiceProvider();
         }

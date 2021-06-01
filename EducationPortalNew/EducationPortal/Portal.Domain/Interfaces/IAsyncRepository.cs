@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Portal.Infrastructure.Interfaces
+namespace Portal.Domain.Interfaces
 {
-    public interface IJsonHandler<TEntity>
+    public interface IAsyncRepository <TEntity>
+        where TEntity : DbEntity
     {
         Task CreateAsync(TEntity entity);
 

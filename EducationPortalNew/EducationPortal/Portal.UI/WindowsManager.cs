@@ -1,11 +1,14 @@
-﻿using Portal.UI.Intefaces;
+﻿using Microsoft.Extensions.Hosting;
+using Portal.UI.Intefaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Portal.UI
 {
-    public class WindowsManager
+    public class WindowsManager : BackgroundService
     {
         private Dictionary<string, IWindow> windowDictionary = new Dictionary<string, IWindow>();
 
@@ -17,18 +20,21 @@ namespace Portal.UI
             }
         }
 
-        public void ShowWindowList()
+        public async Task ShowWindowList()
         {
-            int i = 1;
-
-            foreach (var item in this.windowDictionary.Keys)
+            await Task.Factory.StartNew(() =>
             {
-                Console.WriteLine($"{i++} {item}");
-            }
-            Console.WriteLine("\nChoose window\n");
+                int i = 1;
+
+                foreach (var item in this.windowDictionary.Keys)
+                {
+                    Console.WriteLine($"{i++} {item}");
+                }
+                Console.WriteLine("\nChoose window\n");
+            });
         }
 
-        public void SwitchWindow(string input)
+        public async Task SwitchWindow(string input)
         {
             int i = 1;
 
@@ -48,7 +54,7 @@ namespace Portal.UI
             }
             try
             {
-                this.windowDictionary[window].Show();
+                await this.windowDictionary[window].ShowAsync();
             }
             catch (Exception)
             {
@@ -56,20 +62,22 @@ namespace Portal.UI
             }
         }
 
-        public void Start()
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            this.windowDictionary["Registration"].Show();
-            this.windowDictionary["Authentication"].Show();
+            await this.windowDictionary["Registration"].ShowAsync();
+            await this.windowDictionary["Authentication"].ShowAsync();
 
-            while (true)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 Console.Clear();
 
-                ShowWindowList();
+                Console.WriteLine("Welcome to Main Menu\n");
+
+                await ShowWindowList();
 
                 string input = Console.ReadLine();
 
-                SwitchWindow(input);
+                await SwitchWindow(input);
             }
         }
     }

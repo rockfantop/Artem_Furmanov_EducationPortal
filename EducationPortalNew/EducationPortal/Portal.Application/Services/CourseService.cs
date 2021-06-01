@@ -1,42 +1,51 @@
-﻿using Portal.Application.Interfaces;
+﻿using AutoMapper;
+using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
 using Portal.Domain.Interfaces;
 using Portal.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Portal.Application.Services
 {
     public class CourseService : ICourseService
     {
-        private readonly IRepository<Course> coureRepository;
+        private readonly IAsyncRepository<Course> coureRepository;
+        private readonly IMapper mapper;
 
-        public CourseService(IRepository<Course> repository)
+        public CourseService(IAsyncRepository<Course> repository, IMapper mapper)
         {
             this.coureRepository = repository;
+            this.mapper = mapper;
         }
 
-        public IServiceResult AddMaterial(Course course, Material material)
+        public async Task<IServiceResult> AddMaterialAsync(CourseDTO courseDTO, MaterialDTO materialDTO)
         {
+            var material = this.mapper.Map<Material>(materialDTO);
+
+            var course = this.mapper.Map<Course>(courseDTO);
+
             throw new NotImplementedException();
         }
 
-        public IServiceResult CreateCourse(EmptyCourseDTO emptyCourse)
+        public async Task<IServiceResult> CreateCourseAsync(EmptyCourseDTO emptyCourseDTO)
         {
             try
             {
-                Course course = new Course
+                var course = this.mapper.Map<Course>(emptyCourseDTO);
+
+                var checkCourseName = await this.coureRepository.GetEntityAsync(x => x.Title == course.Title);
+
+                if (checkCourseName == null)
                 {
-                    Id = Guid.NewGuid(),
-                    Title = emptyCourse.Title,
-                    Owner = emptyCourse.Owner,
-                    Description = emptyCourse.Description
-                };
+                    await this.coureRepository.CreateAsync(course);
 
-                this.coureRepository.Create(course);
+                    return ServiceResult.FromResult(true, "Successful Created");
+                }
 
-                return ServiceResult.FromResult(true, "Successful Created");
+                return ServiceResult.FromResult(false, "Course with this name is already exist");
             }
             catch (Exception)
             {
@@ -44,14 +53,43 @@ namespace Portal.Application.Services
             }
         }
 
-        public IServiceResult SaveChanges()
+        public async Task<IServiceResult> CreateCourseAsync(CourseDTO courseDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var course = this.mapper.Map<Course>(courseDTO);
+
+                var checkCourseName = this.coureRepository.GetEntityAsync(x => x.Title == course.Title);
+
+                if (checkCourseName == null)
+                {
+                    await this.coureRepository.CreateAsync(course);
+
+                    return ServiceResult.FromResult(true, "Successful Created");
+                }
+
+                return ServiceResult.FromResult(false, "Course with this name is already exist");
+            }
+            catch (Exception)
+            {
+                return ServiceResult.FromResult(false, "Failed Created");
+            }
         }
 
-        public IServiceResult UpdateCourse()
+        public async Task<IServiceResult> UpdateCourseAsync(CourseDTO courseDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var course = this.mapper.Map<Course>(courseDTO);
+
+                await this.coureRepository.UpdateAsync(course);
+
+                return ServiceResult.FromResult(true, "Course updated");
+            }
+            catch (Exception)
+            {
+                return ServiceResult.FromResult(false, "Course updated failed");
+            }
         }
     }
 }

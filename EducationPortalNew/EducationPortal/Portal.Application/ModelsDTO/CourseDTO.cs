@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Portal.Domain.Models
+namespace Portal.Application.ModelsDTO
 {
-    public class Course : DbEntity
+    public class CourseDTO
     {
+        public Guid Id { get; set; }
+
         public string Title { get; set; }
 
         public string Description { get; set; }
@@ -14,6 +16,6 @@ namespace Portal.Domain.Models
 
         public Guid Owner { get; set; }
 
-        public IEnumerable<Material> Materials { get; set; }
+        public IEnumerable<MaterialDTO> Materials { get; set; }
     }
 }

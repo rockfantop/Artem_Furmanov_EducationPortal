@@ -3,15 +3,16 @@ using Portal.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Portal.Application.Interfaces
 {
     public interface IUserService
     {
-        IServiceResult Registation(InputUserDTO newUser);
+        Task<IServiceResult> RegistationAsync(InputUserDTO inputUserDTO);
 
-        IServiceResult<LogginedUserDTO> Athentication(InputUserDTO userLog);
+        Task<IServiceResult<LogginedUserDTO>> AuthenticationAsync(InputUserDTO inputUserDTO);
 
-        IServiceResult UpdateInfo(LogginedUserDTO logginedUser);
+        Task<IServiceResult> UpdateUserCoursesAsync(LogginedUserDTO logginedUserDTO);
     }
 }

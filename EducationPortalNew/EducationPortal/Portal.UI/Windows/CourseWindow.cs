@@ -1,21 +1,23 @@
 ﻿using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
 using Portal.UI.Intefaces;
+using Portal.UI.Windows.SubWindows.CreatingCourseSubWindows;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Portal.UI.Windows
 {
     class CourseWindow : IWindow
     {
-        private readonly ICourseService courseService;
         private readonly IUserService userService;
+        private readonly ITitleAndDescCreatingSubWindow courseCreatingSubWindows;
 
-        public CourseWindow(ICourseService courseService, IUserService userService)
+        public CourseWindow(IUserService userService, ITitleAndDescCreatingSubWindow courseCreatingSubWindows)
         {
-            this.courseService = courseService;
             this.userService = userService;
+            this.courseCreatingSubWindows = courseCreatingSubWindows;
         }
 
         public string Title => "Course";
@@ -23,14 +25,16 @@ namespace Portal.UI.Windows
         private enum Commands
         {
             CreateCourse = 1,
-            ShowCourses = 2,
+            ShowMyCourses = 2,
             ClearConsole = 3
         }
 
-        public void Show()
+        public async Task ShowAsync()
         {
             while (true)
             {
+                Console.Clear();
+
                 Console.WriteLine("Welcome to the Course\n");
 
                 ShowCommands();
@@ -42,10 +46,10 @@ namespace Portal.UI.Windows
                     return;
                 }
 
-                CommandSelector(input);
+                await CommandSelector(input);
             }
         }
-
+        
         public void ShowCommands()
         {
             int i = 1;
@@ -59,17 +63,17 @@ namespace Portal.UI.Windows
 
             Console.WriteLine("\nChoose Command\n");
         }
-
-        public void CommandSelector(string input)
+        
+        public async Task CommandSelector(string input)
         {
             try
             {
                 switch (int.Parse(input))
                 {
                     case (int)Commands.CreateCourse:
-                        CreateCourse();
+                        await CreateCourse();
                         break;
-                    case (int)Commands.ShowCourses:
+                    case (int)Commands.ShowMyCourses:
                         ShowYourCourses();
                         break;
                     case (int)Commands.ClearConsole:
@@ -85,20 +89,34 @@ namespace Portal.UI.Windows
             }
         }
 
-        public void CreateCourse()
+        public async Task CreateCourse()
         {
-            var emptyCourse = new EmptyCourseDTO();
+            var emptyCourse = new CourseDTO
+            {
+                Id = Guid.NewGuid(),
+                Owner = InSystemUser.GetInstance().Id
+            };
 
-            Console.WriteLine("Write Title of the course\n");
+            var course = await this.courseCreatingSubWindows.ShowCreatingSubWindow(emptyCourse);
 
-            string input = Console.ReadLine();
+            if (course != null)
+            {
+                var list = ((List<CourseDTO>)InSystemUser.GetInstance().OwnedCourses);
 
-            emptyCourse.Title = input;
-            emptyCourse.Owner = InSystemUser.GetInstance().Id;
+                list.Add(course);
 
-            var result = this.courseService.CreateCourse(emptyCourse);
+                InSystemUser.GetInstance().OwnedCourses = list;
 
-            Console.WriteLine(result.Message);
+                var logginedUser = new LogginedUserDTO
+                {
+                    Id = InSystemUser.GetInstance().Id,
+                    Email = InSystemUser.GetInstance().Email,
+                    Name = InSystemUser.GetInstance().Name,
+                    OwnedCourses = InSystemUser.GetInstance().OwnedCourses
+                };
+
+                await this.userService.UpdateUserCoursesAsync(logginedUser);
+            }
         }
 
         public void ShowYourCourses()
@@ -115,8 +133,19 @@ namespace Portal.UI.Windows
 
             foreach (var item in courseList)
             {
-                Console.WriteLine(item.Title);
+                Console.Write($"{item.Title}\t");
+
+                if (item.IsPublic)
+                {
+                    Console.Write("Status: public");
+                }
+                else
+                {
+                    Console.Write("Status: private\n\n");
+                }
             }
+
+            Console.ReadKey();
         }
     }
 }

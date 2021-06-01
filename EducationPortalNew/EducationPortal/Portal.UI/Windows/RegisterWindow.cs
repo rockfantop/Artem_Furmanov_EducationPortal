@@ -1,10 +1,12 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
 using Portal.UI.Intefaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Portal.UI.Windows
 {
@@ -12,16 +14,20 @@ namespace Portal.UI.Windows
     {
         private readonly IUserService userService;
         private AbstractValidator<InputUserDTO> userValidator;
+        private readonly ILogger<RegisterWindow> logger;
 
-        public RegisterWindow(IUserService service, AbstractValidator<InputUserDTO> validator)
+        public RegisterWindow(IUserService service,
+            AbstractValidator<InputUserDTO> validator,
+            ILogger<RegisterWindow> logger)
         {
             this.userService = service;
             this.userValidator = validator;
+            this.logger = logger;
         }
 
         public string Title => "Registration";
 
-        public void Show()
+        public async Task ShowAsync()
         {
             Console.Clear();
 
@@ -32,6 +38,8 @@ namespace Portal.UI.Windows
             Console.WriteLine("Welcome to the registration!\n");
 
             Console.WriteLine("Already exist? Press 1\n");
+
+            while (true)
             {
 
                 if (Console.ReadLine() == "1")
@@ -77,7 +85,17 @@ namespace Portal.UI.Windows
                     }
                 }
 
-                var serviceResult = this.userService.Registation(user);
+                var serviceResult = await this.userService.RegistationAsync(user);
+
+                this.logger.LogInformation($"{serviceResult.Message} with {user.Email}", user.Email);
+
+                if (serviceResult.IsSuccesful)
+                {
+                    break;
+                }
+
+                user.Email = null;
+                user.Password = null;
 
                 Console.WriteLine(serviceResult.Message);
             }

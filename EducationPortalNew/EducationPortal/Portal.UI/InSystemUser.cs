@@ -18,7 +18,7 @@ namespace Portal.UI
 
         public string Email { get; set; }
 
-        public IEnumerable<Course> OwnedCourses { get; set; }
+        public IEnumerable<CourseDTO> OwnedCourses { get; set; }
 
         public static InSystemUser GetInstance()
         {

@@ -1,4 +1,5 @@
-﻿using Portal.Application.Hashers;
+﻿using AutoMapper;
+using Portal.Application.Hashers;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
 using Portal.Domain.Interfaces;
@@ -6,34 +7,37 @@ using Portal.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Portal.Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<User> userRepository;
+        private readonly IAsyncRepository<User> userRepository;
         private readonly IHasher hasher;
+        private readonly IMapper mapper;
 
-        public UserService(IRepository<User> repository, IHasher hasher) 
+        public UserService(IAsyncRepository<User> repository, IHasher hasher, IMapper mapper) 
         {
             this.userRepository = repository;
             this.hasher = hasher;
+            this.mapper = mapper;
         }
 
-        public IServiceResult Registation(InputUserDTO newUser)
+        public async Task<IServiceResult> RegistationAsync(InputUserDTO inputUserDTO)
         {
             try
             {
-                if (this.userRepository.GetEntity(x => x.Email == newUser.Email) == null)
+                if (await this.userRepository.GetEntityAsync(x => x.Email == inputUserDTO.Email) == null)
                 {
                     User user = new User
                     {
                         Id = Guid.NewGuid(),
-                        Email = newUser.Email,
-                        Password = hasher.GetHash(newUser.Password)
+                        Email = inputUserDTO.Email,
+                        Password = hasher.GetHash(inputUserDTO.Password)
                     };
 
-                    this.userRepository.Create(user);
+                    await this.userRepository.CreateAsync(user);
 
                     return ServiceResult.FromResult(true, "Successful registrated.");
                 }
@@ -42,55 +46,45 @@ namespace Portal.Application.Services
                     return ServiceResult.FromResult(false, "User is already exist!");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine(ex.Message);
                 return ServiceResult.FromResult(false, "User is already exist!");
             }
         }
 
-        public IServiceResult<LogginedUserDTO> Athentication(InputUserDTO newLog)
+        public async Task<IServiceResult<LogginedUserDTO>> AuthenticationAsync(InputUserDTO inputUserDTO)
         {
             try
             {
-                var user = this.userRepository
-                    .GetEntity(x => x.Email == newLog.Email && x.Password == this.hasher.GetHash(newLog.Password));
+                var password = this.hasher.GetHash(inputUserDTO.Password);
+
+                var user = await this.userRepository
+                    .GetEntityAsync(x => x.Email == inputUserDTO.Email && x.Password == this.hasher.GetHash(inputUserDTO.Password));
 
                 if (user == null)
                 {
                     return ServiceResult<LogginedUserDTO>.FromResult(false, null, "Invalid email or password!");
                 }
 
-                var logginedUserDTO = new LogginedUserDTO
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Name = user.Name,
-                    OwnedCourses = user.OwnedCourses
-                };
+                var logginedUserDTO = this.mapper.Map<LogginedUserDTO>(user);
 
                 return ServiceResult<LogginedUserDTO>.FromResult(true, logginedUserDTO, "Welcome.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine(ex.Message);
                 return ServiceResult<LogginedUserDTO>.FromResult(false, null, "User is already exist!");
             }
         }
 
-        public IServiceResult UpdateInfo(LogginedUserDTO logginedUser)
+        public async Task<IServiceResult> UpdateUserCoursesAsync(LogginedUserDTO logginedUserDTO)
         {
             try
             {
-                User user = new User
-                {
-                    Id = logginedUser.Id,
-                    Email = logginedUser.Email,
-                    Name = logginedUser.Name,
-                    OwnedCourses = logginedUser.OwnedCourses
-                };
+                var user = this.mapper.Map<User>(logginedUserDTO);
 
-                this.userRepository.Update(user);
+                user.Password = (await this.userRepository.GetEntityAsync(x => x.Id == user.Id)).Password;
+                
+                await this.userRepository.UpdateAsync(user);
 
                 return ServiceResult.FromResult(true, "Successful updated");
             }

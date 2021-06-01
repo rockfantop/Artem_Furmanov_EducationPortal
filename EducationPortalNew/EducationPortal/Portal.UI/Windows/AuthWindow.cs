@@ -1,24 +1,28 @@
-﻿using Portal.Application.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
 using Portal.UI.Intefaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Portal.UI.Windows
 {
     public class AuthWindow : IWindow
     {
         private readonly IUserService userService;
+        private readonly ILogger<AuthWindow> logger;
 
-        public AuthWindow(IUserService service)
+        public AuthWindow(IUserService service, ILogger<AuthWindow> logger)
         {
             this.userService = service;
+            this.logger = logger;
         }
 
         public string Title => "Authentication";
 
-        public void Show()
+        public async Task ShowAsync()
         {
             Console.Clear();
 
@@ -42,10 +46,11 @@ namespace Portal.UI.Windows
                     Password = password
                 };
 
-                var serviceResult = this.userService.Athentication(user);
+                var serviceResult = await this.userService.AuthenticationAsync(user);
 
                 if (serviceResult.IsSuccesful)
                 {
+                    this.logger.LogInformation($"User {serviceResult.Result.Email} authorized", serviceResult.Result.Email);
 
                     Console.WriteLine("\nIn Application\n");
 
