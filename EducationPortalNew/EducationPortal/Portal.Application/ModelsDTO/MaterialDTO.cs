@@ -15,5 +15,7 @@ namespace Portal.Application.ModelsDTO
         public DateTime DateOfPublication { get; set; }
 
         public string Content { get; set; }
+
+        public bool IsReaded { get; set; } = false;
     }
 }

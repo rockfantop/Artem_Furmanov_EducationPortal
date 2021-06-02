@@ -14,6 +14,10 @@ namespace Portal.Domain.Models
 
         public string Password { get; set; }
 
+        public IEnumerable<CourseSkill> Skills { get; set; }
+
         public IEnumerable<Course> OwnedCourses { get; set; }
+
+        public IEnumerable<Course> SubscribedCourses { get; set; }
     }
 }

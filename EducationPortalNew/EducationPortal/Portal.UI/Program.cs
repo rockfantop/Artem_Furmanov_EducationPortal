@@ -44,6 +44,8 @@ namespace Portal.UI
                     services.AddScoped<IWindow, AuthWindow>();
                     services.AddScoped<IWindow, RegisterWindow>();
                     services.AddScoped<IWindow, CourseWindow>();
+                    services.AddScoped<IWindow, CourseSkillWindow>();
+                    services.AddScoped<IWindow, CourseSubscriptionWIndow>();
 
                     services.AddScoped(typeof(IJsonHandler<>), typeof(JsonHandler<>));
                     services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
@@ -56,9 +58,11 @@ namespace Portal.UI
                     services.AddScoped<IInternetMaterialService, InternetMaterialService>();
                     services.AddScoped<IVideoMaterialService, VideoMaterialService>();
                     services.AddScoped<ITextMaterialService, TextMaterialService>();
+                    services.AddScoped<ICourseSkillService, CourseSkillService>();
 
                     services.AddScoped<ITitleAndDescCreatingSubWindow, TitleAndDescription>();
                     services.AddScoped<IMaterialsCreatingSubWindow, Materials>();
+                    services.AddScoped<ICourseSkillCreatingSubWindow, Skills>();
 
                     services.AddScoped<InternetMaterialCreating>();
                     services.AddScoped<VideoMaterialCreating>();

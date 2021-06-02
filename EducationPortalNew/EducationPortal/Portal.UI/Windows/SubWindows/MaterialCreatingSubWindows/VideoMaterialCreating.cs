@@ -32,15 +32,15 @@ namespace Portal.UI.Windows.SubWindows.MaterialCreatingSubWindows
                         DateOfPublication = DateTime.Now
                     };
 
-                    Console.WriteLine("Internet material Title:\n");
+                    Console.WriteLine("Video material Title:\n");
 
                     videoMaterial.Title = Console.ReadLine();
 
-                    Console.WriteLine("\nInternet material Author:\n");
+                    Console.WriteLine("\nVideo material Author:\n");
 
                     videoMaterial.Author = Console.ReadLine();
 
-                    Console.WriteLine("\nInternet material Content:\n");
+                    Console.WriteLine("\nVideo material Content:\n");
 
                     videoMaterial.Content = Console.ReadLine();
 

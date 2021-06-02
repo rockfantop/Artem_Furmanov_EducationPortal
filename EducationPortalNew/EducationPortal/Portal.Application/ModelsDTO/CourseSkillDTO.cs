@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Portal.Application.ModelsDTO
 {
-    public class CourseDTO
+    public class CourseSkillDTO
     {
         public Guid Id { get; set; }
 
@@ -12,12 +12,6 @@ namespace Portal.Application.ModelsDTO
 
         public string Description { get; set; }
 
-        public bool IsPublic { get; set; } = false;
-
-        public Guid Owner { get; set; }
-
-        public IEnumerable<CourseSkillDTO> CourseSkills { get; set; }
-
-        public IEnumerable<MaterialDTO> Materials { get; set; }
+        public int SkillLevel { get; set; }
     }
 }

@@ -95,7 +95,7 @@ namespace Portal.UI.Windows.SubWindows.CreatingCourseSubWindows
                         {
                             return await this.handler.ShowCreatingSubWindow(courseDTO); 
                         }
-                        else
+                        else if (userInput == 2)
                         {
                             var result = await this.Finish(courseDTO);
 

@@ -21,7 +21,7 @@ namespace Portal.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<IServiceResult> AddMaterialAsync(CourseDTO courseDTO, MaterialDTO materialDTO)
+        public Task<IServiceResult> AddMaterialAsync(CourseDTO courseDTO, MaterialDTO materialDTO)
         {
             var material = this.mapper.Map<Material>(materialDTO);
 
@@ -73,6 +73,24 @@ namespace Portal.Application.Services
             catch (Exception)
             {
                 return ServiceResult.FromResult(false, "Failed Created");
+            }
+        }
+
+        public async Task<IServiceResult<List<CourseDTO>>> GetAllPublicAsync()
+        {
+            try
+            {
+                var enumeration = await this.coureRepository.GetAllEntitiesAsync(x => x.IsPublic == true);
+
+                var list = (List<Course>)enumeration;
+
+                var listDTO = this.mapper.Map<List<CourseDTO>>(list);
+
+                return ServiceResult<List<CourseDTO>>.FromResult(true, listDTO, "List of Public Courses");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<List<CourseDTO>>.FromResult(false, null, "List of Public Courses");
             }
         }
 

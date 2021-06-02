@@ -31,19 +31,19 @@ namespace Portal.UI.Windows.SubWindows.MaterialCreatingSubWindows
                         DateOfPublication = DateTime.Now
                     };
 
-                    Console.WriteLine("Internet material Title:\n");
+                    Console.WriteLine("Text material Title:\n");
 
                     textMaterial.Title = Console.ReadLine();
 
-                    Console.WriteLine("\nInternet material Author:\n");
+                    Console.WriteLine("\nText material Author:\n");
 
                     textMaterial.Author = Console.ReadLine();
 
-                    Console.WriteLine("\nInternet material NumberOfPages:\n");
+                    Console.WriteLine("\nText material NumberOfPages:\n");
 
                     textMaterial.NumberOfPages = int.Parse(Console.ReadLine());
 
-                    Console.WriteLine("\nInternet material Content:\n");
+                    Console.WriteLine("\nText material Content:\n");
 
                     textMaterial.Content = Console.ReadLine();
 

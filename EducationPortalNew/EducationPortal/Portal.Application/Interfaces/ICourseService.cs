@@ -16,5 +16,7 @@ namespace Portal.Application.Interfaces
         Task<IServiceResult> AddMaterialAsync(CourseDTO courseDTO, MaterialDTO materialDTO);
 
         Task<IServiceResult> UpdateCourseAsync(CourseDTO courseDTO);
+
+        Task<IServiceResult<List<CourseDTO>>> GetAllPublicAsync();
     }
 }

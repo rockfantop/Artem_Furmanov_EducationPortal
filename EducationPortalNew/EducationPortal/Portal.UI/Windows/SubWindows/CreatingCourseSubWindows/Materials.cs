@@ -15,22 +15,26 @@ namespace Portal.UI.Windows.SubWindows.CreatingCourseSubWindows
         private readonly InternetMaterialCreating internetMaterialCreating;
         private readonly VideoMaterialCreating videoMaterialCreating;
         private readonly TextMaterialCreating textMaterialCreating;
+        private readonly ICourseSkillCreatingSubWindow courseSkillCreatingSubWindow;
 
         public Materials(ICourseService courseService,
             InternetMaterialCreating internetMaterialCreating,
             VideoMaterialCreating videoMaterialCreating,
-            TextMaterialCreating textMaterialCreating)
+            TextMaterialCreating textMaterialCreating,
+            ICourseSkillCreatingSubWindow courseSkillCreatingSubWindow)
         {
             this.courseService = courseService;
             this.internetMaterialCreating = internetMaterialCreating;
             this.videoMaterialCreating = videoMaterialCreating;
             this.textMaterialCreating = textMaterialCreating;
+            this.courseSkillCreatingSubWindow = courseSkillCreatingSubWindow;
         }
 
         private enum Commands
         {
             AddAnotherMaterial = 1,
-            Finish = 2
+            Finish = 2,
+            NextStep = 3
         }
 
         private enum MaterialTypes
@@ -91,9 +95,13 @@ namespace Portal.UI.Windows.SubWindows.CreatingCourseSubWindows
                         {
                             break;
                         }
-                        else
+                        else if (int.Parse(userInput) == 2)
                         {
                             return await Finish(courseDTO);
+                        }
+                        else if (int.Parse(userInput) == 3)
+                        {
+                            return await this.courseSkillCreatingSubWindow.ShowCreatingSubWindow(courseDTO);
                         }
                     }
                 }

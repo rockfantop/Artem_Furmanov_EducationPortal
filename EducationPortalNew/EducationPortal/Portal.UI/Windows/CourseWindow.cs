@@ -20,7 +20,7 @@ namespace Portal.UI.Windows
             this.courseCreatingSubWindows = courseCreatingSubWindows;
         }
 
-        public string Title => "Course";
+        public string Title => "Course Creating";
 
         private enum Commands
         {
@@ -112,7 +112,9 @@ namespace Portal.UI.Windows
                     Id = InSystemUser.GetInstance().Id,
                     Email = InSystemUser.GetInstance().Email,
                     Name = InSystemUser.GetInstance().Name,
-                    OwnedCourses = InSystemUser.GetInstance().OwnedCourses
+                    OwnedCourses = InSystemUser.GetInstance().OwnedCourses,
+                    Skills = InSystemUser.GetInstance().Skills,
+                    SubscribedCourses = InSystemUser.GetInstance().SubscribedCourses
                 };
 
                 await this.userService.UpdateUserCoursesAsync(logginedUser);
@@ -137,7 +139,7 @@ namespace Portal.UI.Windows
 
                 if (item.IsPublic)
                 {
-                    Console.Write("Status: public");
+                    Console.Write("Status: public\n\n");
                 }
                 else
                 {

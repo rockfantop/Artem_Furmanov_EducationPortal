@@ -59,7 +59,9 @@ namespace Portal.UI.Windows
                     logginedUser.Id = serviceResult.Result.Id;
                     logginedUser.Email = serviceResult.Result.Email;
                     logginedUser.Name = serviceResult.Result.Name;
+                    logginedUser.Skills = serviceResult.Result.Skills;
                     logginedUser.OwnedCourses = serviceResult.Result.OwnedCourses;
+                    logginedUser.SubscribedCourses = serviceResult.Result.SubscribedCourses;
 
                     return;
                 }

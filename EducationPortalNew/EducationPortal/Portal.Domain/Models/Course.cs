@@ -14,6 +14,8 @@ namespace Portal.Domain.Models
 
         public Guid Owner { get; set; }
 
+        public IEnumerable<CourseSkill> CourseSkills { get; set; }
+
         public IEnumerable<Material> Materials { get; set; }
     }
 }

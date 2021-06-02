@@ -13,6 +13,10 @@ namespace Portal.Application.ModelsDTO
 
         public string Email { get; set; }
 
+        public IEnumerable<CourseSkillDTO> Skills { get; set; }
+
         public IEnumerable<CourseDTO> OwnedCourses { get; set; }
+
+        public IEnumerable<CourseDTO> SubscribedCourses { get; set; }
     }
 }
