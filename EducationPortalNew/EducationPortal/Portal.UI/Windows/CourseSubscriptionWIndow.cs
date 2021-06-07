@@ -257,7 +257,9 @@ namespace Portal.UI.Windows
 
                         Console.WriteLine("0 - Exit\n\n1 - Complete\n\n");
 
-                        var material = ((List<MaterialDTO>)course.Materials)[input - 1];
+                        var material = ((List<MaterialDTO>)course.Materials)[userInput - 1];
+
+                        var index = userInput - 1;
 
                         Console.WriteLine($"Title: {material.Title}\tDataOfPublication:{material.DateOfPublication}\n\n{material.Content}\n\n");
 
@@ -269,7 +271,7 @@ namespace Portal.UI.Windows
                         }
                         else if (userInput == 1)
                         {
-                            ((List<MaterialDTO>)course.Materials)[userInput - 1].IsReaded = true;
+                            ((List<MaterialDTO>)course.Materials)[index].IsReaded = true;
 
                             var logginedUser = new LogginedUserDTO
                             {
