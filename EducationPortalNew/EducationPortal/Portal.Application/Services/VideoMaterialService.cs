@@ -1,23 +1,21 @@
 ﻿using AutoMapper;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
+using Portal.Domain.Entities;
 using Portal.Domain.Interfaces;
-using Portal.Domain.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Portal.Application.Services
 {
     public class VideoMaterialService : IVideoMaterialService
     {
-        private readonly IAsyncRepository<VideoMaterial> internetMaterialRepository;
+        private readonly IEfRepository<VideoMaterial> videoMaterialRepository;
         private readonly IMapper mapper;
 
-        public VideoMaterialService(IAsyncRepository<VideoMaterial> internetMaterialRepository, IMapper mapper)
+        public VideoMaterialService(IEfRepository<VideoMaterial> videoMaterialRepository, IMapper mapper)
         {
-            this.internetMaterialRepository = internetMaterialRepository;
+            this.videoMaterialRepository = videoMaterialRepository;
             this.mapper = mapper;
         }
 
@@ -27,7 +25,9 @@ namespace Portal.Application.Services
             {
                 var videoMaterial = this.mapper.Map<VideoMaterial>(videoMaterialDTO);
 
-                await this.internetMaterialRepository.CreateAsync(videoMaterial);
+                await this.videoMaterialRepository.AddAsync(videoMaterial);
+
+                await this.videoMaterialRepository.SaveChanges();
 
                 return ServiceResult.FromResult(true, "Material was added");
             }
@@ -43,7 +43,9 @@ namespace Portal.Application.Services
             {
                 var videoMaterial = this.mapper.Map<VideoMaterial>(videoMaterialDTO);
 
-                await this.internetMaterialRepository.UpdateAsync(videoMaterial);
+                await this.videoMaterialRepository.UpdateAsync(videoMaterial);
+
+                await this.videoMaterialRepository.SaveChanges();
 
                 return ServiceResult.FromResult(true, "Material was updated");
             }

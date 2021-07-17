@@ -29,7 +29,7 @@ namespace Portal.UI.Windows.SubWindows.CreatingCourseSubWindows
         {
             var emptyCourse = new EmptyCourseDTO
             {
-                Owner = courseDTO.Owner,
+                OwnerId = courseDTO.OwnerId,
                 Id = courseDTO.Id,
                 Title = courseDTO.Title,
                 Description = courseDTO.Description

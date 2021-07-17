@@ -27,6 +27,7 @@ namespace Portal.UI.Windows.SubWindows.MaterialCreatingSubWindows
                     var internetMaterial = new InternetMaterialDTO
                     {
                         Id = Guid.NewGuid(),
+                        CourseId = courseDTO.Id,
                         DateOfPublication = DateTime.Now
                     };
 

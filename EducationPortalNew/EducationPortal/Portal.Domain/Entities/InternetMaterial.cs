@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Portal.Domain.Models
+namespace Portal.Domain.Entities
 {
     public class InternetMaterial : Material
     {

@@ -12,11 +12,13 @@ namespace Portal.UI.Windows
     class CourseWindow : IWindow
     {
         private readonly IUserService userService;
+        private readonly ICourseService courseService;
         private readonly ITitleAndDescCreatingSubWindow courseCreatingSubWindows;
 
-        public CourseWindow(IUserService userService, ITitleAndDescCreatingSubWindow courseCreatingSubWindows)
+        public CourseWindow(IUserService userService, ICourseService courseService, ITitleAndDescCreatingSubWindow courseCreatingSubWindows)
         {
             this.userService = userService;
+            this.courseService = courseService;
             this.courseCreatingSubWindows = courseCreatingSubWindows;
         }
 
@@ -74,7 +76,7 @@ namespace Portal.UI.Windows
                         await CreateCourse();
                         break;
                     case (int)Commands.ShowMyCourses:
-                        ShowYourCourses();
+                        await ShowYourCourses();
                         break;
                     case (int)Commands.ClearConsole:
                         Console.Clear();
@@ -94,7 +96,7 @@ namespace Portal.UI.Windows
             var emptyCourse = new CourseDTO
             {
                 Id = Guid.NewGuid(),
-                Owner = InSystemUser.GetInstance().Id
+                OwnerId = InSystemUser.GetInstance().Id
             };
 
             var course = await this.courseCreatingSubWindows.ShowCreatingSubWindow(emptyCourse);
@@ -121,29 +123,32 @@ namespace Portal.UI.Windows
             }
         }
 
-        public void ShowYourCourses()
+        public async Task ShowYourCourses()
         {
-            var courseList = InSystemUser.GetInstance().OwnedCourses;
+            var result = await this.courseService.GetUserOwnedCourseListAsync(InSystemUser.GetInstance().Id, 1, 10);
 
             Console.WriteLine("Result:\n");
 
-            if (courseList == null)
+            if (result.Result.Items == null || ((List<CourseDTO>)result.Result.Items).Count == 0)
             {
                 Console.WriteLine("No courses\n");
+
+                Console.ReadKey();
+
                 return;
             }
 
-            foreach (var item in courseList)
+            foreach (var item in result.Result.Items)
             {
                 Console.Write($"{item.Title}\t");
 
                 if (item.IsPublic)
                 {
-                    Console.Write("Status: public\n\n");
+                    Console.Write($"{item.Title}\t Status: public\n\n");
                 }
                 else
                 {
-                    Console.Write("Status: private\n\n");
+                    Console.Write($"{item.Title}\t Status: private\n\n");
                 }
             }
 

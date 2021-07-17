@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Application", "Porta
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Infrastructure", "Portal.Infrastructure\Portal.Infrastructure.csproj", "{D9A564D2-EF37-4965-96CF-D05FF0A6B70A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.Test", "Portal.Test\Portal.Test.csproj", "{4393DC10-772A-489F-A946-D6CCF9A45809}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.EfCore", "Portal.EfCore\Portal.EfCore.csproj", "{7084F5AA-8585-4800-BC10-1C34B59D7B56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{D9A564D2-EF37-4965-96CF-D05FF0A6B70A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9A564D2-EF37-4965-96CF-D05FF0A6B70A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9A564D2-EF37-4965-96CF-D05FF0A6B70A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4393DC10-772A-489F-A946-D6CCF9A45809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4393DC10-772A-489F-A946-D6CCF9A45809}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4393DC10-772A-489F-A946-D6CCF9A45809}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4393DC10-772A-489F-A946-D6CCF9A45809}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7084F5AA-8585-4800-BC10-1C34B59D7B56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7084F5AA-8585-4800-BC10-1C34B59D7B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7084F5AA-8585-4800-BC10-1C34B59D7B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7084F5AA-8585-4800-BC10-1C34B59D7B56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

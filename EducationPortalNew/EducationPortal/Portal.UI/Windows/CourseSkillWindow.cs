@@ -125,7 +125,7 @@ namespace Portal.UI.Windows
 
                 var result = await this.courseSkillService.AddSkillAsync(curseSkillDTO);
 
-                if (result != null)
+                if (result.IsSuccesful)
                 {
                     Console.WriteLine(result.Message);
                     break;
@@ -139,11 +139,11 @@ namespace Portal.UI.Windows
 
         public async Task ShowAllSkills()
         {
-            var skills = (await this.courseSkillService.ShowAllAsync()).Result;
+            var skills = (await this.courseSkillService.GetListAsync(1, 10)).Result;
 
             Console.WriteLine("Result:\n");
 
-            if (skills == null)
+            if (skills.Items == null || ((List<CourseSkillDTO>)skills.Items).Count == 0)
             {
                 Console.WriteLine("No Skills\n");
 
@@ -152,7 +152,7 @@ namespace Portal.UI.Windows
                 return;
             }
 
-            foreach (var item in skills)
+            foreach (var item in skills.Items)
             {
                 Console.Write($"{item.Title}\n\n");
             }

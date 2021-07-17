@@ -1,7 +1,6 @@
-﻿using Portal.Domain.Models;
+﻿using Portal.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Portal.Domain.Interfaces

@@ -14,10 +14,10 @@ namespace Portal.Application.ModelsDTO
 
         public bool IsPublic { get; set; } = false;
 
-        public Guid Owner { get; set; }
+        public Guid OwnerId { get; set; }
 
-        public IEnumerable<CourseSkillDTO> CourseSkills { get; set; }
+        public ICollection<CourseCourseSkillDTO> CourseSkills { get; set; }
 
-        public IEnumerable<MaterialDTO> Materials { get; set; }
+        public ICollection<MaterialDTO> Materials { get; set; }
     }
 }

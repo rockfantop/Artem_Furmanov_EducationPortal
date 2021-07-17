@@ -1,23 +1,21 @@
 ﻿using AutoMapper;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
+using Portal.Domain.Entities;
 using Portal.Domain.Interfaces;
-using Portal.Domain.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Portal.Application.Services
 {
     public class TextMaterialService : ITextMaterialService
     {
-        private readonly IAsyncRepository<TextMaterial> internetMaterialRepository;
+        private readonly IEfRepository<TextMaterial> textMaterialRepository;
         private readonly IMapper mapper;
 
-        public TextMaterialService(IAsyncRepository<TextMaterial> internetMaterialRepository, IMapper mapper)
+        public TextMaterialService(IEfRepository<TextMaterial> textMaterialRepository, IMapper mapper)
         {
-            this.internetMaterialRepository = internetMaterialRepository;
+            this.textMaterialRepository = textMaterialRepository;
             this.mapper = mapper;
         }
 
@@ -27,7 +25,9 @@ namespace Portal.Application.Services
             {
                 var textMaterial = this.mapper.Map<TextMaterial>(textMaterialDTO);
 
-                await this.internetMaterialRepository.CreateAsync(textMaterial);
+                await this.textMaterialRepository.AddAsync(textMaterial);
+
+                await this.textMaterialRepository.SaveChanges();
 
                 return ServiceResult.FromResult(true, "Material was added");
             }
@@ -43,7 +43,9 @@ namespace Portal.Application.Services
             {
                 var textMaterial = this.mapper.Map<TextMaterial>(textMaterialDTO);
 
-                await this.internetMaterialRepository.UpdateAsync(textMaterial);
+                await this.textMaterialRepository.UpdateAsync(textMaterial);
+
+                await this.textMaterialRepository.SaveChanges();
 
                 return ServiceResult.FromResult(true, "Material was updated");
             }

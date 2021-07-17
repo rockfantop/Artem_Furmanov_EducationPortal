@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,16 +11,14 @@ using Portal.Application.MapperProfiles;
 using Portal.Application.ModelsDTO;
 using Portal.Application.Services;
 using Portal.Domain.Interfaces;
-using Portal.Domain.Models;
-using Portal.Infrastructure.Interfaces;
-using Portal.Infrastructure.Json.JsonHandlers;
+using Portal.EfCore.Context;
 using Portal.Infrastructure.Repositories;
 using Portal.UI.Intefaces;
 using Portal.UI.Validators;
 using Portal.UI.Windows;
 using Portal.UI.Windows.SubWindows.CreatingCourseSubWindows;
 using Portal.UI.Windows.SubWindows.MaterialCreatingSubWindows;
-using System;
+using System.Configuration;
 using System.Threading.Tasks;
 
 namespace Portal.UI
@@ -47,8 +46,11 @@ namespace Portal.UI
                     services.AddScoped<IWindow, CourseSkillWindow>();
                     services.AddScoped<IWindow, CourseSubscriptionWIndow>();
 
-                    services.AddScoped(typeof(IJsonHandler<>), typeof(JsonHandler<>));
-                    services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
+                    services.AddDbContext<PortalDbContext>(c =>
+                    c.UseSqlServer(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString));
+
+                    services.AddScoped<DbContext>(c => c.GetRequiredService<PortalDbContext>());
+                    services.AddScoped(typeof(IEfRepository<>), typeof(EfCoreRepository<>));
 
                     services.AddTransient<IHasher, SHA256Hasher>();
 

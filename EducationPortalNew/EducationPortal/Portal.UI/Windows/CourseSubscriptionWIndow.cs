@@ -12,11 +12,18 @@ namespace Portal.UI.Windows
     {
         private readonly ICourseService courseService;
         private readonly IUserService userService;
+        private readonly ICourseSkillService courseSkillService;
+        private readonly IMaterialsService materialsService;
 
-        public CourseSubscriptionWIndow(ICourseService courseService, IUserService userService)
+        public CourseSubscriptionWIndow(ICourseService courseService,
+            IUserService userService,
+            ICourseSkillService courseSkillService,
+            IMaterialsService materialsService)
         {
             this.courseService = courseService;
             this.userService = userService;
+            this.courseSkillService = courseSkillService;
+            this.materialsService = materialsService;
         }
 
         public string Title => "Course Subscription";
@@ -72,7 +79,7 @@ namespace Portal.UI.Windows
 
         public async Task SubscribeCourse()
         {
-            var courseList = (await this.courseService.GetAllPublicAsync()).Result;
+            var courseList = ((List<CourseDTO>)(await this.courseService.GetPublicListAsync(1, 10)).Result.Items);
 
             while (true)
             {
@@ -99,9 +106,11 @@ namespace Portal.UI.Windows
                     
                     Console.Write($"\nSkills: ");
 
-                    ((List<CourseSkillDTO>)course.CourseSkills).ForEach(x =>
+                    ((List<CourseCourseSkillDTO>)course.CourseSkills).ForEach(x =>
                     {
-                        Console.Write(x.Title);
+                        var skill = this.courseSkillService.GetSkill(x.CourseSkillId).Result;
+
+                        Console.Write($"\n{skill.Result.Title}\n");
                     });
 
                     Console.WriteLine("\n");
@@ -120,24 +129,13 @@ namespace Portal.UI.Windows
                             }
                             else if (userInput == 1)
                             {
-                                if (InSystemUser.GetInstance().SubscribedCourses == null)
+                                ((List<MaterialDTO>)course.Materials).ForEach(x =>
                                 {
-                                    InSystemUser.GetInstance().SubscribedCourses = new List<CourseDTO>();
+                                    this.materialsService.CreateStatus(x.Id, InSystemUser.GetInstance().Id);
                                 }
+                                );
 
-                                ((List<CourseDTO>)InSystemUser.GetInstance().SubscribedCourses).Add(course);
-
-                                var logginedUser = new LogginedUserDTO
-                                {
-                                    Id = InSystemUser.GetInstance().Id,
-                                    Email = InSystemUser.GetInstance().Email,
-                                    Name = InSystemUser.GetInstance().Name,
-                                    OwnedCourses = InSystemUser.GetInstance().OwnedCourses,
-                                    Skills = InSystemUser.GetInstance().Skills,
-                                    SubscribedCourses = InSystemUser.GetInstance().SubscribedCourses
-                                };
-
-                                await this.userService.UpdateUserCoursesAsync(logginedUser);
+                                await this.courseService.SubscribeOnCourse(InSystemUser.GetInstance().Id, course.Id);
 
                                 break;
                             }
@@ -157,19 +155,19 @@ namespace Portal.UI.Windows
 
         public async Task ShowAllCourses()
         {
-            var courseList = (await this.courseService.GetAllPublicAsync()).Result;
+            var courseList = (await this.courseService.GetPublicListAsync(1, 10)).Result;
 
             Console.WriteLine("All Courses:\n");
 
             var i = 1;
 
-            if (courseList == null)
+            if (courseList.Items == null || ((List<CourseDTO>)courseList.Items).Count == 0)
             {
                 Console.WriteLine("No public courses\n");
                 return;
             }
 
-            foreach (var item in courseList)
+            foreach (var item in courseList.Items)
             {
                 Console.Write($"{i++} Course:\t{item.Title}\n\n");
             }

@@ -17,6 +17,12 @@ namespace Portal.Application.Interfaces
 
         Task<IServiceResult> UpdateCourseAsync(CourseDTO courseDTO);
 
-        Task<IServiceResult<List<CourseDTO>>> GetAllPublicAsync();
+        Task<IServiceResult> AddCourseSkillToCourseAsync(Guid courseSkillId, Guid courseId);
+
+        Task<IServiceResult> SubscribeOnCourse(Guid userId, Guid courseId);
+
+        Task<IServiceResult<PagedListDTO<CourseDTO>>> GetPublicListAsync(int pageNumber, int pageSize);
+
+        Task<IServiceResult<PagedListDTO<CourseDTO>>> GetUserOwnedCourseListAsync(Guid owner, int pageNumber, int pageSize);
     }
 }

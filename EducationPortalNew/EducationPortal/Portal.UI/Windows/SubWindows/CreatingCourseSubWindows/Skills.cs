@@ -47,22 +47,20 @@ namespace Portal.UI.Windows.SubWindows.CreatingCourseSubWindows
 
                     Console.WriteLine("Choose skill:\n");
 
-                    var result = await ShowAllSkills();
+                    var result = await ShowSkillPage(1, 10);
 
                     var userInput = int.Parse(Console.ReadLine()) - 1;
 
-                    var enumeration = courseDTO.CourseSkills;
-
-                    var list = (List<CourseSkillDTO>)enumeration;
+                    await this.courseService.AddCourseSkillToCourseAsync(result[userInput].Id, courseDTO.Id);
                     
-                    if (enumeration == null) 
+                    if (result == null) 
                     {
-                        list = new List<CourseSkillDTO>();
+                        Console.WriteLine("No avaible skils");
                     }
 
-                    list.Add(result[userInput]);
+                    //list.Add(result[userInput]);
 
-                    courseDTO.CourseSkills = list;
+                    //courseDTO.CourseSkills = list;
 
                     while (true)
                     {
@@ -101,15 +99,15 @@ namespace Portal.UI.Windows.SubWindows.CreatingCourseSubWindows
             Console.WriteLine("\nChoose Command\n");
         }
 
-        public async Task<List<CourseSkillDTO>> ShowAllSkills()
+        public async Task<List<CourseSkillDTO>> ShowSkillPage(int page, int size)
         {
-            var skills = (await this.courseSkillService.ShowAllAsync()).Result;
+            var skills = (await this.courseSkillService.GetListAsync(page, size)).Result;
 
             var i = 1;
 
             Console.WriteLine("Result:\n");
 
-            if (skills == null)
+            if (skills.Items == null || ((List<CourseSkillDTO>)skills.Items).Count == 0)
             {
                 Console.WriteLine("No Skills\n");
 
@@ -118,12 +116,12 @@ namespace Portal.UI.Windows.SubWindows.CreatingCourseSubWindows
                 return null;
             }
 
-            foreach (var item in skills)
+            foreach (var item in skills.Items)
             {
                 Console.Write($"{i++} {item.Title}\n\n");
             }
 
-            return skills;
+            return (List<CourseSkillDTO>)skills.Items;
         }
     }
 }

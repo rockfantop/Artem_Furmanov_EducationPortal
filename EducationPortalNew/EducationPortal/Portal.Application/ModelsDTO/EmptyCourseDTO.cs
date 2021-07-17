@@ -12,6 +12,6 @@ namespace Portal.Application.ModelsDTO
 
         public string Description { get; set; }
 
-        public Guid Owner { get; set; }
+        public Guid OwnerId { get; set; }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
+using Portal.Domain.Entities;
 using Portal.Domain.Interfaces;
-using Portal.Domain.Models;
+using Portal.Domain.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,10 +13,10 @@ namespace Portal.Application.Services
 {
     public class CourseSkillService : ICourseSkillService
     {
-        private readonly IAsyncRepository<CourseSkill> courseSkillRepository;
+        private readonly IEfRepository<CourseSkill> courseSkillRepository;
         private readonly IMapper mapper;
 
-        public CourseSkillService(IAsyncRepository<CourseSkill> courseSkillRepository, IMapper mapper)
+        public CourseSkillService(IEfRepository<CourseSkill> courseSkillRepository, IMapper mapper)
         {
             this.courseSkillRepository = courseSkillRepository;
             this.mapper = mapper;
@@ -25,11 +26,20 @@ namespace Portal.Application.Services
         {
             try
             {
-                var courseSkill = this.mapper.Map<CourseSkill>(courseSkillDTO);
+                if ((await this.courseSkillRepository.FindAsync(CourseSkillSpecification.Title(courseSkillDTO.Title)) == null))
+                {
+                    var courseSkill = this.mapper.Map<CourseSkill>(courseSkillDTO);
 
-                await this.courseSkillRepository.CreateAsync(courseSkill);
+                    await this.courseSkillRepository.AddAsync(courseSkill);
 
-                return ServiceResult.FromResult(true, "Skill was added");
+                    await this.courseSkillRepository.SaveChanges();
+
+                    return ServiceResult.FromResult(true, "Skill was added");
+                }
+                else
+                {
+                    return ServiceResult.FromResult(false, "Skill wasn`t added");
+                }
             }
             catch (Exception)
             {
@@ -37,20 +47,34 @@ namespace Portal.Application.Services
             }
         }
 
-        public async Task<IServiceResult<List<CourseSkillDTO>>> ShowAllAsync()
+        public async Task<IServiceResult<PagedListDTO<CourseSkillDTO>>> GetListAsync(int pageNumber, int pageSize)
         {
-            var enumeration = await this.courseSkillRepository.GetAllEntitiesAsync(x => x == x);
-
-            var courseSkills = (List<CourseSkill>)enumeration;
-
-            var courseSkillsDTO = this.mapper.Map<List<CourseSkillDTO>>(courseSkills);
-
-            if (courseSkills != null)
+            try
             {
-                return ServiceResult<List<CourseSkillDTO>>.FromResult(true, courseSkillsDTO, "All skills");
-            }
+                var list = await this.courseSkillRepository.GetAsync(pageNumber, pageSize);
 
-            return ServiceResult<List<CourseSkillDTO>>.FromResult(false, null, "0 skills");
+                var listDTO = this.mapper.Map<PagedListDTO<CourseSkillDTO>>(list);
+
+                return ServiceResult<PagedListDTO<CourseSkillDTO>>.FromResult(true, listDTO, "Successful");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<PagedListDTO<CourseSkillDTO>>.FromResult(true, null, "Error");
+            }
+        }
+
+        public async Task<IServiceResult<CourseSkillDTO>> GetSkill(Guid id)
+        {
+            try
+            {
+                var item = await this.courseSkillRepository.FindAsync(CourseSkillSpecification.Id(id));
+
+                return ServiceResult<CourseSkillDTO>.FromResult(true, this.mapper.Map<CourseSkillDTO>(item), "Successful");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<CourseSkillDTO>.FromResult(true, null, "Error");
+            }
         }
     }
 }

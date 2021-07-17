@@ -12,5 +12,7 @@ namespace Portal.Application.Interfaces
         IVideoMaterialService VideoMaterialService { get; }
 
         ITextMaterialService TextMaterialService { get; }
+
+        Task<IServiceResult> CreateStatus(Guid materialId, Guid userId);
     }
 }

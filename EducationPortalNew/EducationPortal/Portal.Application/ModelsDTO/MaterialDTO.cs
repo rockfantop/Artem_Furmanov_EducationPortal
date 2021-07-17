@@ -12,6 +12,8 @@ namespace Portal.Application.ModelsDTO
 
         public string Author { get; set; }
 
+        public Guid CourseId { get; set; }
+
         public DateTime DateOfPublication { get; set; }
 
         public string Content { get; set; }

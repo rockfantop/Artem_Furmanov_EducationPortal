@@ -2,8 +2,9 @@
 using Portal.Application.Hashers;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
+using Portal.Domain.Entities;
 using Portal.Domain.Interfaces;
-using Portal.Domain.Models;
+using Portal.Domain.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,11 +14,11 @@ namespace Portal.Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly IAsyncRepository<User> userRepository;
+        private readonly IEfRepository<User> userRepository;
         private readonly IHasher hasher;
         private readonly IMapper mapper;
 
-        public UserService(IAsyncRepository<User> repository, IHasher hasher, IMapper mapper) 
+        public UserService(IEfRepository<User> repository, IHasher hasher, IMapper mapper) 
         {
             this.userRepository = repository;
             this.hasher = hasher;
@@ -28,7 +29,7 @@ namespace Portal.Application.Services
         {
             try
             {
-                if (await this.userRepository.GetEntityAsync(x => x.Email == inputUserDTO.Email) == null)
+                if ((await this.userRepository.FindAsync(UserSpecification.Email(inputUserDTO.Email)) == null))
                 {
                     User user = new User
                     {
@@ -37,7 +38,9 @@ namespace Portal.Application.Services
                         Password = hasher.GetHash(inputUserDTO.Password)
                     };
 
-                    await this.userRepository.CreateAsync(user);
+                    await this.userRepository.AddAsync(user);
+
+                    await this.userRepository.SaveChanges();
 
                     return ServiceResult.FromResult(true, "Successful registrated.");
                 }
@@ -59,7 +62,7 @@ namespace Portal.Application.Services
                 var password = this.hasher.GetHash(inputUserDTO.Password);
 
                 var user = await this.userRepository
-                    .GetEntityAsync(x => x.Email == inputUserDTO.Email && x.Password == this.hasher.GetHash(inputUserDTO.Password));
+                    .FindAsync(UserSpecification.Email(inputUserDTO.Email).And(UserSpecification.Password(password)));
 
                 if (user == null)
                 {
@@ -81,10 +84,12 @@ namespace Portal.Application.Services
             try
             {
                 var user = this.mapper.Map<User>(logginedUserDTO);
-
-                user.Password = (await this.userRepository.GetEntityAsync(x => x.Id == user.Id)).Password;
+                
+                //user.Password = (await this.userRepository.GetEntityAsync(x => x.Id == user.Id)).Password;
                 
                 await this.userRepository.UpdateAsync(user);
+
+                await this.userRepository.SaveChanges();
 
                 return ServiceResult.FromResult(true, "Successful updated");
             }

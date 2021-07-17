@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Portal.Domain.Models
+namespace Portal.Domain.Entities
 {
     public class CourseSkill : DbEntity
     {
@@ -10,6 +10,8 @@ namespace Portal.Domain.Models
 
         public string Description { get; set; }
 
-        public int SkillLevel { get; set; }
+        public ICollection<UserCourseSkill> UserCourseSkills { get; set; }
+
+        public ICollection<CourseCourseSkill> CourseCourseSkills { get; set; }
     }
 }

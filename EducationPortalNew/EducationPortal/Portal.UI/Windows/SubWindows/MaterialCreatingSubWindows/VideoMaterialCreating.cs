@@ -27,6 +27,7 @@ namespace Portal.UI.Windows.SubWindows.MaterialCreatingSubWindows
                     var videoMaterial = new VideoMaterialDTO
                     {
                         Id = Guid.NewGuid(),
+                        CourseId = courseDTO.Id,
                         Quality = 720,
                         Duration = DateTime.Today.TimeOfDay,
                         DateOfPublication = DateTime.Now

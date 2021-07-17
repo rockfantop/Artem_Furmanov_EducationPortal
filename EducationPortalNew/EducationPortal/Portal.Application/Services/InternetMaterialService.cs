@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
+using Portal.Domain.Entities;
 using Portal.Domain.Interfaces;
 using Portal.Domain.Models;
 using System;
@@ -12,10 +13,10 @@ namespace Portal.Application.Services
 {
     public class InternetMaterialService : IInternetMaterialService
     {
-        private readonly IAsyncRepository<InternetMaterial> internetMaterialRepository;
+        private readonly IEfRepository<InternetMaterial> internetMaterialRepository;
         private readonly IMapper mapper;
 
-        public InternetMaterialService(IAsyncRepository<InternetMaterial> internetMaterialRepository, IMapper mapper)
+        public InternetMaterialService(IEfRepository<InternetMaterial> internetMaterialRepository, IMapper mapper)
         {
             this.internetMaterialRepository = internetMaterialRepository;
             this.mapper = mapper;
@@ -27,7 +28,9 @@ namespace Portal.Application.Services
             {
                 var internetMaterial = this.mapper.Map<InternetMaterial>(internetMaterialDTO);
 
-                await this.internetMaterialRepository.CreateAsync(internetMaterial);
+                await this.internetMaterialRepository.AddAsync(internetMaterial);
+
+                await this.internetMaterialRepository.SaveChanges();
 
                 return ServiceResult.FromResult(true, "Material was added");
             }
@@ -44,6 +47,8 @@ namespace Portal.Application.Services
                 var internetMaterial = this.mapper.Map<InternetMaterial>(internetMaterialDTO);
 
                 await this.internetMaterialRepository.UpdateAsync(internetMaterial);
+
+                await this.internetMaterialRepository.SaveChanges();
 
                 return ServiceResult.FromResult(true, "Material was updated");
             }

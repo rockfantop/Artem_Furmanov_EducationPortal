@@ -27,6 +27,7 @@ namespace Portal.UI.Windows.SubWindows.MaterialCreatingSubWindows
                     var textMaterial = new TextMaterialDTO
                     {
                         Id = Guid.NewGuid(),
+                        CourseId = courseDTO.Id,
                         Format = "pdf",
                         DateOfPublication = DateTime.Now
                     };

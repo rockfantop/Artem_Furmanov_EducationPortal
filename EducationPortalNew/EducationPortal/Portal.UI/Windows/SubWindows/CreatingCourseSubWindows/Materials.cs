@@ -66,6 +66,10 @@ namespace Portal.UI.Windows.SubWindows.CreatingCourseSubWindows
 
                     Console.WriteLine("Choose type of material:\n");
 
+                    courseDTO.IsPublic = true;
+
+                    await this.courseService.CreateCourseAsync(courseDTO);
+
                     ShowMaterials();
 
                     var userInput = Console.ReadLine();

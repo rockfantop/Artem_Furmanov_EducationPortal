@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Portal.Application.ModelsDTO;
-using Portal.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Portal.Domain.Entities;
 
 namespace Portal.Application.MapperProfiles
 {
@@ -15,10 +11,12 @@ namespace Portal.Application.MapperProfiles
             CreateMap<CourseDTO, Course>()
                 .ForMember(dest => dest.Materials, opt =>
                     opt.MapFrom(scr => scr.Materials))
-                .ForMember(dest => dest.CourseSkills, opt =>
+                .ForMember(dest => dest.CourseCourseSkills, opt =>
                     opt.MapFrom(scr => scr.CourseSkills)).ReverseMap();
 
             CreateMap<EmptyCourseDTO, Course>().ReverseMap();
+
+            CreateMap<CourseCourseSkill, CourseCourseSkillDTO>().ReverseMap();
 
             CreateMap<MaterialDTO, Material>()
                 .Include<InternetMaterialDTO, InternetMaterial>()

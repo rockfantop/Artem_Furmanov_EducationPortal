@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
+using Portal.Domain.Entities;
 using Portal.Domain.Interfaces;
-using Portal.Domain.Models;
+using Portal.Domain.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,21 +13,57 @@ namespace Portal.Application.Services
 {
     public class CourseService : ICourseService
     {
-        private readonly IAsyncRepository<Course> coureRepository;
+        private readonly IEfRepository<Course> coureRepository;
+        private readonly IEfRepository<CourseCourseSkill> courseCourseSkillRepository;
+        private readonly IEfRepository<ProgressBar> courseProgressBarRepository;
         private readonly IMapper mapper;
+        private readonly ICourseSkillService courseSkillService;
 
-        public CourseService(IAsyncRepository<Course> repository, IMapper mapper)
+        public CourseService(IEfRepository<Course> repository,
+            IEfRepository<CourseCourseSkill> courseCourseSkillRepository,
+            IEfRepository<ProgressBar> courseProgressBarRepository,
+            IMapper mapper,
+            ICourseSkillService courseSkillService)
         {
             this.coureRepository = repository;
+            this.courseCourseSkillRepository = courseCourseSkillRepository;
+            this.courseProgressBarRepository = courseProgressBarRepository;
             this.mapper = mapper;
+            this.courseSkillService = courseSkillService;
+        }
+
+        public async Task<IServiceResult> AddCourseSkillToCourseAsync(Guid courseSkillId, Guid courseId)
+        {
+            try
+            {
+                var relation = new CourseCourseSkill
+                {
+                    CourseSkillId = courseSkillId,
+                    CourseId = courseId
+                };
+
+                if ((await this.courseCourseSkillRepository.FindAsync(CourseCourseSkillSecification.CourseId(courseId)
+                    .And(CourseCourseSkillSecification.CourseSkillId(courseSkillId)))) == null)
+                {
+                    await this.courseCourseSkillRepository.AddAsync(relation);
+
+                    await this.courseCourseSkillRepository.SaveChanges();
+
+                    return ServiceResult.FromResult(true, "Successful");
+                }
+                else
+                {
+                    return ServiceResult.FromResult(false, "Error");
+                }
+            }
+            catch (Exception)
+            {
+                return ServiceResult.FromResult(false, "Error");
+            }
         }
 
         public Task<IServiceResult> AddMaterialAsync(CourseDTO courseDTO, MaterialDTO materialDTO)
         {
-            var material = this.mapper.Map<Material>(materialDTO);
-
-            var course = this.mapper.Map<Course>(courseDTO);
-
             throw new NotImplementedException();
         }
 
@@ -36,11 +73,13 @@ namespace Portal.Application.Services
             {
                 var course = this.mapper.Map<Course>(emptyCourseDTO);
 
-                var checkCourseName = await this.coureRepository.GetEntityAsync(x => x.Title == course.Title);
+                var checkCourseName = await this.coureRepository.FindAsync(CourseSpecification.Title(emptyCourseDTO.Title));
 
                 if (checkCourseName == null)
                 {
-                    await this.coureRepository.CreateAsync(course);
+                    await this.coureRepository.AddAsync(course);
+
+                    await this.coureRepository.SaveChanges();
 
                     return ServiceResult.FromResult(true, "Successful Created");
                 }
@@ -59,11 +98,13 @@ namespace Portal.Application.Services
             {
                 var course = this.mapper.Map<Course>(courseDTO);
 
-                var checkCourseName = this.coureRepository.GetEntityAsync(x => x.Title == course.Title);
+                var checkCourseName = await this.coureRepository.FindAsync(CourseSpecification.Title(courseDTO.Title));
 
                 if (checkCourseName == null)
                 {
-                    await this.coureRepository.CreateAsync(course);
+                    await this.coureRepository.AddAsync(course);
+
+                    await this.coureRepository.SaveChanges();
 
                     return ServiceResult.FromResult(true, "Successful Created");
                 }
@@ -76,21 +117,74 @@ namespace Portal.Application.Services
             }
         }
 
-        public async Task<IServiceResult<List<CourseDTO>>> GetAllPublicAsync()
+        public async Task<IServiceResult<PagedListDTO<CourseDTO>>> GetPublicListAsync(int pageNumber, int pageSize)
         {
             try
             {
-                var enumeration = await this.coureRepository.GetAllEntitiesAsync(x => x.IsPublic == true);
+                var list = await this.coureRepository.GetListWithInclude(CourseSpecification.IsPublic(true),
+                    pageNumber, pageSize, default, x => x.Materials, x => x.CourseCourseSkills);
 
-                var list = (List<Course>)enumeration;
+                var listDTO = this.mapper.Map<PagedListDTO<CourseDTO>>(list);
 
-                var listDTO = this.mapper.Map<List<CourseDTO>>(list);
-
-                return ServiceResult<List<CourseDTO>>.FromResult(true, listDTO, "List of Public Courses");
+                return ServiceResult<PagedListDTO<CourseDTO>>.FromResult(true, listDTO, "Successful");
             }
             catch (Exception)
             {
-                return ServiceResult<List<CourseDTO>>.FromResult(false, null, "List of Public Courses");
+                return ServiceResult<PagedListDTO<CourseDTO>>.FromResult(true, null, "Error");
+            }
+        }
+
+        public async Task<IServiceResult<PagedListDTO<CourseDTO>>> GetUserOwnedCourseListAsync(Guid owner, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var list = await this.coureRepository.GetAsync(CourseSpecification.Owner(owner), pageNumber, pageSize);
+
+                ((List<Course>)list.Items).ForEach(x => 
+                { 
+                    x.CourseCourseSkills = null;
+                    x.ProgressBars = null;
+                    x.Materials = null;
+                } 
+                );
+
+                var listDTO = this.mapper.Map<PagedListDTO<CourseDTO>>(list);
+
+                return ServiceResult<PagedListDTO<CourseDTO>>.FromResult(true, listDTO, "Successful");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<PagedListDTO<CourseDTO>>.FromResult(true, null, "Error");
+            }
+        }
+
+        public async Task<IServiceResult> SubscribeOnCourse(Guid userId, Guid courseId)
+        {
+            try
+            {
+                var relation = new ProgressBar
+                {
+                    UserId = userId,
+                    CourseId = courseId
+                };
+
+                if ((await this.courseProgressBarRepository.FindAsync(ProgressBarSecification.CourseId(courseId)
+                    .And(ProgressBarSecification.UserId(userId)))) == null)
+                {
+                    await this.courseProgressBarRepository.AddAsync(relation);
+
+                    await this.courseProgressBarRepository.SaveChanges();
+
+                    return ServiceResult.FromResult(true, "Successful");
+                }
+                else
+                {
+                    return ServiceResult.FromResult(false, "Error");
+                }
+            }
+            catch (Exception)
+            {
+                return ServiceResult.FromResult(false, "Error");
             }
         }
 
@@ -101,6 +195,8 @@ namespace Portal.Application.Services
                 var course = this.mapper.Map<Course>(courseDTO);
 
                 await this.coureRepository.UpdateAsync(course);
+
+                await this.coureRepository.SaveChanges();
 
                 return ServiceResult.FromResult(true, "Course updated");
             }
