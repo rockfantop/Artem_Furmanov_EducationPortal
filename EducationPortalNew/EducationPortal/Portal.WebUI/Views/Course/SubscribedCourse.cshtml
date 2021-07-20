@@ -1,0 +1,43 @@
+﻿@model Portal.WebUI.ViewModels.SkillAndCourseViewModel
+
+<h2>Course @Model.Course.Title</h2>
+
+<span>Title - @Model.Course.Title</span>
+<br />
+<span>Description - @Model.Course.Description</span>
+
+<h3>Materials</h3>
+
+@{
+    int i = 1;
+    int j = 1;
+}
+
+@foreach (var item in Model.Course.Materials)
+{
+    <div id="course">
+        <span>
+            <span>@i Title - @item.Title | Author - @item.Author | Content - @item.Content</span>
+            <a type="button" class="btn btn-secondary" asp-controller="Material" asp-action="ShowMaterial" asp-route-courseId="@Model.Course.Id" asp-route-materialId="@item.Id">Open</a>
+        </span>
+    </div>
+
+    i++;
+}
+
+<h3>Skills</h3>
+
+@foreach (var item in Model.Skills.Items)
+{
+    <div id="course">
+        <span>
+            <span>@j Title - @item.Title | Description - @item.Description</span>
+        </span>
+    </div>
+
+    j++;
+}
+
+<a class="btn btn-secondary" asp-controller="Course" asp-action="FinishCourse" asp-route-id="@Model.Course.Id">Finish Course</a>
+
+<a class="btn btn-secondary" asp-controller="Course" asp-action="ShowSubscribedCourses">Back</a>

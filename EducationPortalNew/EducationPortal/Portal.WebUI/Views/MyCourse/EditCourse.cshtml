@@ -1,0 +1,58 @@
+﻿@model Portal.WebUI.ViewModels.SkillAndCourseViewModel
+
+@{
+    ViewData["Title"] = "Edit Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit Page</h2>
+
+<span>Title - @Model.Course.Title</span>
+<br />
+<span>Description - @Model.Course.Description</span>
+
+<h3>Materials</h3>
+
+<div class="dropdown">
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Choose material to add
+    </a>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <a class="dropdown-item" asp-controller="Material" asp-action="AddTextMaterial" asp-route-id="@ViewBag.ReturnUrl">Text Material</a>
+        <a class="dropdown-item" asp-controller="Material" asp-action="AddVideoMaterial" asp-route-id="@ViewBag.ReturnUrl">Video Materia</a>
+        <a class="dropdown-item" asp-controller="Material" asp-action="AddInternetMaterial" asp-route-id="@ViewBag.ReturnUrl">Internet Materia</a>
+    </div>
+</div>
+
+@{
+    int i = 1;
+    int j = 1;
+}
+
+@foreach (var item in Model.Course.Materials)
+{
+    <div id="course">
+        <span>
+            <span>@i Title - @item.Title | Author - @item.Author | Content - @item.Content</span>
+        </span>
+    </div>
+
+    i++;
+}
+
+<h3>Skills</h3>
+
+<a class="btn btn-secondary" asp-controller="MyCourse" asp-action="AddSkill" asp-route-id="@Model.Course.Id">Add Skill</a>
+
+@foreach (var item in Model.Skills.Items)
+{
+    <div id="course">
+        <span>
+            <span>@j Title - @item.Title | Description - @item.Description</span>
+        </span>
+    </div>
+
+    j++;
+}
+
+<a class="btn btn-secondary" asp-controller="MyCourse" asp-action="Publish" asp-route-id="@Model.Course.Id">Publish</a>

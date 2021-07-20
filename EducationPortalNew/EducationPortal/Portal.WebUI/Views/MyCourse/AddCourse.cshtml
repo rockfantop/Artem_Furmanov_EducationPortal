@@ -1,0 +1,25 @@
+﻿@model Portal.WebUI.ViewModels.CourseCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Course";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Course Create Page</h2>
+
+<form method="post" asp-controller="MyCourse" asp-action="AddCourse">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="Title"></label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div>
+        <label asp-for="Description"></label><br />
+        <input asp-for="Description" />
+        <span asp-validation-for="Description"></span>
+    </div>
+    <div>
+        <input type="submit" value="Submit" />
+    </div>
+</form>

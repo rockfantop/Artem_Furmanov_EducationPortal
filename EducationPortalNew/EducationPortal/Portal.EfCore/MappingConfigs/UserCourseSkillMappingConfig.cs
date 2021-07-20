@@ -11,7 +11,7 @@ namespace Portal.EfCore.MappingConfigs
     {
         public void Configure(EntityTypeBuilder<UserCourseSkill> builder)
         {
-            builder.ToTable("UserCourseSkills", "sch");
+            builder.ToTable("UserCourseSkills", "dbo");
 
             builder.HasKey(x => new { x.CourseSkillId, x.UserId });
 

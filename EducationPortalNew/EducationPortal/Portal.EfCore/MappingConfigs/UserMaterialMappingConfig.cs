@@ -11,7 +11,7 @@ namespace Portal.EfCore.MappingConfigs
     {
         public void Configure(EntityTypeBuilder<UserMaterial> builder)
         {
-            builder.ToTable("UserMaterials", "sch");
+            builder.ToTable("UserMaterials", "dbo");
 
             builder.HasKey(x => new { x.MaterialId, x.UserId });
 

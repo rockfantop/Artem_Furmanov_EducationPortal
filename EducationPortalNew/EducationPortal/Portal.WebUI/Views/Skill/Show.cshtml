@@ -1,0 +1,21 @@
+﻿@model Portal.WebUI.Models.PagedListModel<Portal.WebUI.ViewModels.SkillViewModel>
+
+@{
+    ViewData["Title"] = "Skill";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Skill Page @Model.PageNumber</h2>
+
+@{
+    int i = 1;
+}
+
+@foreach (var item in Model.Items)
+{
+    <div id="course">
+        <span>@i Title - @item.Title | Description - @item.Description</span>
+    </div>
+
+    i++;
+}

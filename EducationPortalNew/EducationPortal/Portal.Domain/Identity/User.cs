@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using Portal.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Portal.Domain.Entities
+namespace Portal.Domain.Identity
 {
-    public class User : DbEntity
+    public class Role : IdentityRole<Guid>
     {
-        public string Name { get; set; }
+    }
 
-        public string Email { get; set; }
-
-        public string Password { get; set; }
-
+    public class User : IdentityUser<Guid>, DbEntity
+    {
         public ICollection<UserCourseSkill> UserCourseSkills { get; set; }
 
         public ICollection<Course> OwnedCourses { get; set; }

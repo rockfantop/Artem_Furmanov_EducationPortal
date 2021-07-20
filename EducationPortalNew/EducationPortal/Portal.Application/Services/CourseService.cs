@@ -18,18 +18,21 @@ namespace Portal.Application.Services
         private readonly IEfRepository<ProgressBar> courseProgressBarRepository;
         private readonly IMapper mapper;
         private readonly ICourseSkillService courseSkillService;
+        private readonly IMaterialsService materialsService;
 
         public CourseService(IEfRepository<Course> repository,
             IEfRepository<CourseCourseSkill> courseCourseSkillRepository,
             IEfRepository<ProgressBar> courseProgressBarRepository,
             IMapper mapper,
-            ICourseSkillService courseSkillService)
+            ICourseSkillService courseSkillService,
+            IMaterialsService materialsService)
         {
             this.coureRepository = repository;
             this.courseCourseSkillRepository = courseCourseSkillRepository;
             this.courseProgressBarRepository = courseProgressBarRepository;
             this.mapper = mapper;
             this.courseSkillService = courseSkillService;
+            this.materialsService = materialsService;
         }
 
         public async Task<IServiceResult> AddCourseSkillToCourseAsync(Guid courseSkillId, Guid courseId)
@@ -60,11 +63,6 @@ namespace Portal.Application.Services
             {
                 return ServiceResult.FromResult(false, "Error");
             }
-        }
-
-        public Task<IServiceResult> AddMaterialAsync(CourseDTO courseDTO, MaterialDTO materialDTO)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<IServiceResult> CreateCourseAsync(EmptyCourseDTO emptyCourseDTO)
@@ -117,6 +115,22 @@ namespace Portal.Application.Services
             }
         }
 
+        public async Task<IServiceResult<CourseDTO>> GetCourseAsync(Guid id)
+        {
+            try
+            {
+                var course = await this.coureRepository.GetWithInclude(CourseSpecification.Id(id), x => x.Materials);
+
+                var courseDTO = this.mapper.Map<CourseDTO>(course);
+
+                return ServiceResult<CourseDTO>.FromResult(true, courseDTO, "Successful");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<CourseDTO>.FromResult(true, null, "Error");
+            }
+        }
+
         public async Task<IServiceResult<PagedListDTO<CourseDTO>>> GetPublicListAsync(int pageNumber, int pageSize)
         {
             try
@@ -158,7 +172,7 @@ namespace Portal.Application.Services
             }
         }
 
-        public async Task<IServiceResult> SubscribeOnCourse(Guid userId, Guid courseId)
+        public async Task<IServiceResult> SubscribeOnCourseAsync(Guid userId, Guid courseId)
         {
             try
             {
@@ -171,6 +185,13 @@ namespace Portal.Application.Services
                 if ((await this.courseProgressBarRepository.FindAsync(ProgressBarSecification.CourseId(courseId)
                     .And(ProgressBarSecification.UserId(userId)))) == null)
                 {
+                    var course = await this.coureRepository.GetWithInclude(CourseSpecification.Id(courseId), x => x.Materials);
+
+                    foreach (var item in course.Materials)
+                    {
+                        await this.materialsService.CreateStatusAsync(item.Id, userId);
+                    }
+
                     await this.courseProgressBarRepository.AddAsync(relation);
 
                     await this.courseProgressBarRepository.SaveChanges();
@@ -181,6 +202,63 @@ namespace Portal.Application.Services
                 {
                     return ServiceResult.FromResult(false, "Error");
                 }
+            }
+            catch (Exception)
+            {
+                return ServiceResult.FromResult(false, "Error");
+            }
+        }
+
+        public async Task<IServiceResult<PagedListDTO<CourseDTO>>> GetSubscribedCoursesAsync(Guid userId, int page)
+        {
+            try
+            {
+                var course = await this.coureRepository.GetAsync(CourseSpecification.SubscribedCourseId(userId), page, 10);
+
+                var courseDTO = this.mapper.Map<PagedListDTO<CourseDTO>>(course);
+
+                return ServiceResult<PagedListDTO<CourseDTO>>.FromResult(true, courseDTO, "Successful");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<PagedListDTO<CourseDTO>>.FromResult(false, null, "Error");
+            }
+        }
+
+        public async Task<IServiceResult> FinishCourse(Guid id, Guid userId)
+        {
+            try
+            {
+                var result = await GetCourseAsync(id);
+
+                var materialList = new List<MaterialDTO>();
+
+                foreach (var item in result.Result.Materials)
+                {
+                    materialList.Add((await this.materialsService.GetMaterialAsync(item.Id, userId)).Result);
+                }
+
+                bool isAllPassed = true;
+
+                foreach (var item in materialList)
+                {
+                    if (item.IsReaded == false)
+                    {
+                        isAllPassed = false;
+                    }
+                }
+
+                if (isAllPassed)
+                {
+                    var skills = await this.courseSkillService.GetCourseSkillsListAsync(1, 10, id);
+
+                    foreach (var item in skills.Result.Items)
+                    {
+                        await this.courseSkillService.CreateStatusAsync(item.Id, userId);
+                    }
+                }
+
+                return ServiceResult.FromResult(true, "Completed");
             }
             catch (Exception)
             {

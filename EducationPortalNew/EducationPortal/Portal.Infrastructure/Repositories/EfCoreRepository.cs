@@ -74,10 +74,10 @@ namespace Portal.Infrastructure.Repositories
             return await Include(includeProperties).ToListAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetWithInclude(Specification<TEntity> specification, params Expression<Func<TEntity, object>>[] includeProperties)
+        public async Task<TEntity> GetWithInclude(Specification<TEntity> specification, params Expression<Func<TEntity, object>>[] includeProperties)
         {
             var query = Include(includeProperties);
-            return await query.Where(specification.Expression).ToListAsync();
+            return await query.Where(specification.Expression).FirstOrDefaultAsync();
         }
 
         public async Task<PagedList<TEntity>> GetListWithInclude(Specification<TEntity> specification, int pageNumber, int pageSize, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includeProperties)

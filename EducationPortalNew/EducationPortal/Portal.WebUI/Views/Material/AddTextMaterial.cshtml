@@ -1,0 +1,40 @@
+﻿@model Portal.WebUI.ViewModels.TextMaterialViewModel
+
+@{
+    ViewData["Title"] = "Add Material";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add Text Material Page</h2>
+
+<form method="post" asp-controller="Material" asp-action="AddTextMaterial">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="Title"></label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div>
+        <label asp-for="Author"></label><br />
+        <input asp-for="Author" />
+        <span asp-validation-for="Author"></span>
+    </div>
+    <div>
+        <label asp-for="Content"></label><br />
+        <input asp-for="Content" />
+        <span asp-validation-for="Content"></span>
+    </div>
+    <div>
+        <label asp-for="NumberOfPages"></label><br />
+        <input asp-for="NumberOfPages" />
+        <span asp-validation-for="NumberOfPages"></span>
+    </div>
+    <div>
+        <label asp-for="Format"></label><br />
+        <input asp-for="Format" />
+        <span asp-validation-for="Format"></span>
+    </div>
+    <div>
+        <input type="submit" value="Submit" />
+    </div>
+</form>

@@ -1,0 +1,24 @@
+﻿@model Portal.WebUI.Models.PagedListModel<Portal.WebUI.ViewModels.CourseViewModel>
+
+@{
+    ViewData["Title"] = "Subscribed Courses";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Subscribed Courses Page @Model.PageNumber</h2>
+
+@{
+    int i = 1;
+}
+
+@foreach (var item in Model.Items)
+{
+    <div id="course">
+        <span>
+            <span>@i Title - @item.Title | Description - @item.Description</span>
+            <a type="button" class="btn btn-secondary" asp-controller="Course" asp-action="SubscribedCourse" asp-route-id="@item.Id">To Course</a>
+        </span>
+    </div>
+
+    i++;
+}

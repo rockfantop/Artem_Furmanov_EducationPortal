@@ -1,4 +1,4 @@
-﻿using Portal.Domain.Entities;
+﻿using Portal.Domain.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +14,7 @@ namespace Portal.Domain.Specifications
 
         public static Specification<User> Password(string password)
         {
-            return new Specification<User>(x => x.Password == password);
+            return new Specification<User>(x => x.PasswordHash == password);
         }
     }
 }

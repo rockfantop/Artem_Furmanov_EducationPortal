@@ -40,7 +40,7 @@ namespace Portal.Domain.Interfaces
 
         Task<IEnumerable<TEntity>> GetWithInclude(params Expression<Func<TEntity, object>>[] includeProperties);
 
-        Task<IEnumerable<TEntity>> GetWithInclude(Specification<TEntity> specification, params Expression<Func<TEntity, object>>[] includeProperties);
+        Task<TEntity> GetWithInclude(Specification<TEntity> specification, params Expression<Func<TEntity, object>>[] includeProperties);
 
         Task<PagedList<TEntity>> GetListWithInclude(Specification<TEntity> specification, int pageNumber, int pageSize, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includeProperties);
 

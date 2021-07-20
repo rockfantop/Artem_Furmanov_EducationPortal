@@ -1,0 +1,25 @@
+﻿@model Portal.WebUI.ViewModels.SkillViewModel
+
+@{
+    ViewData["Title"] = "Add Skill";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add Skill</h2>
+
+<form method="post" asp-controller="Skill" asp-action="Add">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="Title"></label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div>
+        <label asp-for="Description"></label><br />
+        <input asp-for="Description" />
+        <span asp-validation-for="Description"></span>
+    </div>
+    <div>
+        <input type="submit" value="Submit" />
+    </div>
+</form>

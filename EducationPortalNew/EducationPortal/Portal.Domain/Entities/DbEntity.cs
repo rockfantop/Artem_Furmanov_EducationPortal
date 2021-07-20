@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Portal.Domain.Entities
 {
-    public abstract class DbEntity
+    public interface DbEntity
     {
         public Guid Id { get; set; }
     }

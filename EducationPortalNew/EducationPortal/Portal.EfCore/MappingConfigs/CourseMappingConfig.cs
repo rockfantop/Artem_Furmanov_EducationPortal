@@ -11,7 +11,7 @@ namespace Portal.EfCore.MappingConfigs
     {
         public void Configure(EntityTypeBuilder<Course> builder)
         {
-            builder.ToTable("Courses", "sch");
+            builder.ToTable("Courses", "dbo");
 
             builder.HasKey(x => x.Id)
                 .IsClustered();

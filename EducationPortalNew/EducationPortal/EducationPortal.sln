@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Infrastructure", "Po
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.EfCore", "Portal.EfCore\Portal.EfCore.csproj", "{7084F5AA-8585-4800-BC10-1C34B59D7B56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.WebUI", "Portal.WebUI\Portal.WebUI.csproj", "{4C2773B1-419E-4801-BA8F-CDDF6413C2B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{7084F5AA-8585-4800-BC10-1C34B59D7B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7084F5AA-8585-4800-BC10-1C34B59D7B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7084F5AA-8585-4800-BC10-1C34B59D7B56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C2773B1-419E-4801-BA8F-CDDF6413C2B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C2773B1-419E-4801-BA8F-CDDF6413C2B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C2773B1-419E-4801-BA8F-CDDF6413C2B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C2773B1-419E-4801-BA8F-CDDF6413C2B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

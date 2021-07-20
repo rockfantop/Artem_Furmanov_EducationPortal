@@ -11,7 +11,7 @@ namespace Portal.EfCore.MappingConfigs
     {
         public void Configure(EntityTypeBuilder<ProgressBar> builder)
         {
-            builder.ToTable("ProgressBars", "sch");
+            builder.ToTable("ProgressBars", "dbo");
 
             builder.HasKey(x => new { x.CourseId, x.UserId });
 

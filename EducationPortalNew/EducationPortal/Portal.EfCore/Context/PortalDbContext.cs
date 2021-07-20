@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Portal.Domain.Entities;
+using Portal.Domain.Identity;
 using Portal.EfCore.MappingConfigs;
 using System;
 using System.Collections.Generic;
@@ -7,7 +9,7 @@ using System.Text;
 
 namespace Portal.EfCore.Context
 {
-    public class PortalDbContext : DbContext
+    public class PortalDbContext : IdentityDbContext<User, Role, Guid>
     {
         public PortalDbContext(DbContextOptions<PortalDbContext> options) : base(options)
         {
@@ -19,6 +21,8 @@ namespace Portal.EfCore.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserMappingConfig).Assembly);
 
             modelBuilder.Entity<TextMaterial>().ToTable("TextMaterials");
@@ -26,7 +30,6 @@ namespace Portal.EfCore.Context
             modelBuilder.Entity<VideoMaterial>().ToTable("VideoMaterials");
         }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseSkill> CourseSkills { get; set; }
         public DbSet<CourseCourseSkill> CourseCourseSkill { get; set; }

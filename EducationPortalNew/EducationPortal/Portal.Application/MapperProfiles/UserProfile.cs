@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Portal.Application.ModelsDTO;
 using Portal.Domain.Entities;
+using Portal.Domain.Identity;
 
 namespace Portal.Application.MapperProfiles
 {

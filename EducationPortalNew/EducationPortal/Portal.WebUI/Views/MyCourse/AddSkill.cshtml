@@ -1,0 +1,23 @@
+﻿@model Portal.WebUI.Models.PagedListModel<Portal.WebUI.ViewModels.SkillViewModel>
+
+@{
+    ViewData["Title"] = "Add Skill";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add skill to course Page @Model.PageNumber</h2>
+
+@{
+    int i = 1;
+}
+
+@foreach (var item in Model.Items)
+{
+<div id="course">
+    <span>@i Title - @item.Title | Description - @item.Description</span>
+    <a type="button" class="btn btn-secondary" asp-controller="Skill" asp-action="Get" asp-route-id="@item.Id">Detalis</a>
+    <a type="button" class="btn btn-secondary" asp-controller="MyCourse" asp-action="AddSkillToCourse" asp-route-courseId="@ViewBag.ReturnUrl" asp-route-skillId="@item.Id">Add</a>
+</div>
+
+    i++;
+}

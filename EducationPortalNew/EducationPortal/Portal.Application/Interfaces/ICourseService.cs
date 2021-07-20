@@ -13,16 +13,20 @@ namespace Portal.Application.Interfaces
 
         Task<IServiceResult> CreateCourseAsync(CourseDTO courseDTO);
 
-        Task<IServiceResult> AddMaterialAsync(CourseDTO courseDTO, MaterialDTO materialDTO);
+        Task<IServiceResult<CourseDTO>> GetCourseAsync(Guid id);
+
+        Task<IServiceResult<PagedListDTO<CourseDTO>>> GetSubscribedCoursesAsync(Guid userId, int page);
 
         Task<IServiceResult> UpdateCourseAsync(CourseDTO courseDTO);
 
         Task<IServiceResult> AddCourseSkillToCourseAsync(Guid courseSkillId, Guid courseId);
 
-        Task<IServiceResult> SubscribeOnCourse(Guid userId, Guid courseId);
+        Task<IServiceResult> SubscribeOnCourseAsync(Guid userId, Guid courseId);
 
         Task<IServiceResult<PagedListDTO<CourseDTO>>> GetPublicListAsync(int pageNumber, int pageSize);
 
         Task<IServiceResult<PagedListDTO<CourseDTO>>> GetUserOwnedCourseListAsync(Guid owner, int pageNumber, int pageSize);
+
+        Task<IServiceResult> FinishCourse(Guid id, Guid userId);
     }
 }

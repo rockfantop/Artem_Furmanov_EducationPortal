@@ -15,11 +15,13 @@ namespace Portal.Application.Services
     {
         private readonly IEfRepository<CourseSkill> courseSkillRepository;
         private readonly IMapper mapper;
+        private readonly IEfRepository<UserCourseSkill> userSkillRepository;
 
-        public CourseSkillService(IEfRepository<CourseSkill> courseSkillRepository, IMapper mapper)
+        public CourseSkillService(IEfRepository<CourseSkill> courseSkillRepository, IMapper mapper, IEfRepository<UserCourseSkill> userSkillRepository)
         {
             this.courseSkillRepository = courseSkillRepository;
             this.mapper = mapper;
+            this.userSkillRepository = userSkillRepository;
         }
 
         public async Task<IServiceResult> AddSkillAsync(CourseSkillDTO courseSkillDTO)
@@ -47,7 +49,39 @@ namespace Portal.Application.Services
             }
         }
 
+        public async Task<IServiceResult<PagedListDTO<CourseSkillDTO>>> GetCourseSkillsListAsync(int pageNumber, int pageSize, Guid courseId)
+        {
+            try
+            {
+                var list = await this.courseSkillRepository.GetAsync(CourseSkillSpecification.CourseId(courseId), pageNumber, pageSize);
+
+                var listDTO = this.mapper.Map<PagedListDTO<CourseSkillDTO>>(list);
+
+                return ServiceResult<PagedListDTO<CourseSkillDTO>>.FromResult(true, listDTO, "Successful");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<PagedListDTO<CourseSkillDTO>>.FromResult(true, null, "Error");
+            }
+        }
+
         public async Task<IServiceResult<PagedListDTO<CourseSkillDTO>>> GetListAsync(int pageNumber, int pageSize)
+        {
+            try
+            {
+                var list = await this.courseSkillRepository.GetAsync(pageNumber, pageSize);
+
+                var listDTO = this.mapper.Map<PagedListDTO<CourseSkillDTO>>(list);
+
+                return ServiceResult<PagedListDTO<CourseSkillDTO>>.FromResult(true, listDTO, "Successful");
+            }
+            catch (Exception)
+            {
+                return ServiceResult<PagedListDTO<CourseSkillDTO>>.FromResult(true, null, "Error");
+            }
+        }
+
+        public async Task<IServiceResult<PagedListDTO<CourseSkillDTO>>> GetNonCourseSkillsListAsync(int pageNumber, int pageSize, Guid courseId)
         {
             try
             {
@@ -74,6 +108,28 @@ namespace Portal.Application.Services
             catch (Exception)
             {
                 return ServiceResult<CourseSkillDTO>.FromResult(true, null, "Error");
+            }
+        }
+
+        public async Task<IServiceResult> CreateStatusAsync(Guid skillId, Guid userId)
+        {
+            try
+            {
+                var relation = new UserCourseSkill
+                {
+                    UserId = userId,
+                    CourseSkillId = skillId
+                };
+
+                await this.userSkillRepository.AddAsync(relation);
+
+                await this.userSkillRepository.SaveChanges();
+
+                return ServiceResult.FromResult(true, "Successful");
+            }
+            catch (Exception)
+            {
+                return ServiceResult.FromResult(false, "Error");
             }
         }
     }

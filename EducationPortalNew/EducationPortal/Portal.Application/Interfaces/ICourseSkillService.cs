@@ -12,6 +12,12 @@ namespace Portal.Application.Interfaces
 
         Task<IServiceResult<PagedListDTO<CourseSkillDTO>>> GetListAsync(int pageNumber, int pageSize);
 
+        Task<IServiceResult<PagedListDTO<CourseSkillDTO>>> GetCourseSkillsListAsync(int pageNumber, int pageSize, Guid courseId);
+
+        Task<IServiceResult<PagedListDTO<CourseSkillDTO>>> GetNonCourseSkillsListAsync(int pageNumber, int pageSize, Guid courseId);
+
         Task<IServiceResult<CourseSkillDTO>> GetSkill(Guid id);
+
+        Task<IServiceResult> CreateStatusAsync(Guid skillId, Guid userId);
     }
 }

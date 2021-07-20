@@ -1,0 +1,16 @@
+﻿@model Portal.WebUI.ViewModels.MaterialViewModel
+
+<h2>Material @Model.Title</h2>
+<div>
+    Title - @Model.Title
+    <br>
+    Author - @Model.Author
+    <br>
+    Date of publication - @Model.DateOfPublication
+    <br>
+    Content - @Model.Content
+    <br>
+    Passed - @Model.IsReaded
+    <br>
+</div>
+<a type="button" class="btn btn-secondary" asp-controller="Material" asp-action="Pass" asp-route-courseId="@ViewBag.MaterialId" asp-route-materialId="@Model.Id">Pass</a>

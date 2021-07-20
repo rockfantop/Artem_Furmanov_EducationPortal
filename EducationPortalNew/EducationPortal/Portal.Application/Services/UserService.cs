@@ -2,7 +2,7 @@
 using Portal.Application.Hashers;
 using Portal.Application.Interfaces;
 using Portal.Application.ModelsDTO;
-using Portal.Domain.Entities;
+using Portal.Domain.Identity;
 using Portal.Domain.Interfaces;
 using Portal.Domain.Specifications;
 using System;
@@ -35,7 +35,7 @@ namespace Portal.Application.Services
                     {
                         Id = Guid.NewGuid(),
                         Email = inputUserDTO.Email,
-                        Password = hasher.GetHash(inputUserDTO.Password)
+                        PasswordHash = hasher.GetHash(inputUserDTO.Password)
                     };
 
                     await this.userRepository.AddAsync(user);

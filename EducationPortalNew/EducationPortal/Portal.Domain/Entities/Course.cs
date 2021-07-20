@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Portal.Domain.Identity;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,8 @@ namespace Portal.Domain.Entities
 {
     public class Course : DbEntity
     {
+        public Guid Id { get; set; }
+
         public string Title { get; set; }
 
         public string Description { get; set; }

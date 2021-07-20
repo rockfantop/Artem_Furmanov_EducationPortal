@@ -1,0 +1,35 @@
+﻿@model Portal.WebUI.ViewModels.VideoMaterialViewModel
+
+@{
+    ViewData["Title"] = "Add Material";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add Video Material Page</h2>
+
+<form method="post" asp-controller="Material" asp-action="AddVideoMaterial">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="Title"></label><br />
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div>
+        <label asp-for="Author"></label><br />
+        <input asp-for="Author" />
+        <span asp-validation-for="Author"></span>
+    </div>
+    <div>
+        <label asp-for="Content"></label><br />
+        <input asp-for="Content" />
+        <span asp-validation-for="Content"></span>
+    </div>
+    <div>
+        <label asp-for="Quality"></label><br />
+        <input asp-for="Quality" />
+        <span asp-validation-for="Quality"></span>
+    </div>
+    <div>
+        <input type="submit" value="Submit" />
+    </div>
+</form>
